@@ -36,3 +36,23 @@ export const userLoginSchema = z.object({
         password: z.string().min(6).max(50),
     })
 })
+
+export const userForgotPasswordSchema = z.object({
+    body: z.object({
+        email: z.string().email(),
+    })
+})
+
+export const updatePasswordSchema = z.object({
+    body: z.object({
+        password: z.string().min(6).max(50),
+        email: z.string().email(),
+    })
+})
+
+export const userForgotPasswordOtpSchema = z.object({
+    body: z.object({
+        email: z.string().email(),
+        otp: z.string().min(4).max(4),
+    })
+})

@@ -1,5 +1,6 @@
 import { createServer } from 'http'
 import { createApp } from './app'
+import { env } from './config/env';
 
 const main = async () => {
     try {
@@ -7,7 +8,7 @@ const main = async () => {
         const app = createApp();
         const server = createServer(app)
 
-        const port = 3000;
+        const port = env.GATEWAY_SERVICE_PORT;
         server.listen(port, () => {
             console.log(`Gateway service is running at port ${port}`);
         })
@@ -24,6 +25,7 @@ const main = async () => {
         process.on("SIGTERM", shutdown);
 
     } catch (error) {
+        console.error(error);
         process.exit(1);
     }
 }

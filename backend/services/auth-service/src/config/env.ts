@@ -1,13 +1,6 @@
 import "dotenv/config";
 import { createEnv, z } from "@multi-vendor-e-commerce/common";
 
-// host: "smtp.ethereal.email",
-//     port: 587,
-//         secure: false, // Use true for port 465, false for port 587
-//             auth: {
-//     user: "maddison53@ethereal.email",
-//         pass: "jn7jnAPss4f63QBp6D",
-//     },
 
 const envSchema = z.object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

@@ -1,5 +1,5 @@
 import UserService from "@/services/user.services";
-import { asyncHandler, HttpResponse } from "@multi-vendor-e-commerce/common";
+import { HttpResponse } from "@multi-vendor-e-commerce/common";
 import { NextFunction, Request, Response } from "express";
 
 
@@ -50,6 +50,42 @@ export class UserController {
          })
          res.status(200).json(
             HttpResponse.success({ data: { id: user.user.id, email: user.user.email } }, "login successfully")
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async forgotPassword(req: Request, res: Response, next: NextFunction) {
+      try {
+         const { email } = req.body;
+         await this.service.forgotPassword(email, 'user');
+         res.status(200).json(
+            HttpResponse.success(null, "OTP sent successfully, plz verify your acccount")
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async updatePassword(req: Request, res: Response, next: NextFunction) {
+      try {
+         const { email, password } = req.body;
+         await this.service.updatePassword(email, password);
+         res.status(200).json(
+            HttpResponse.success(null, "Password updated successfully")
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async verifyForgotPasswordOtp(req: Request, res: Response, next: NextFunction) {
+      try {
+         const { email, otp } = req.body;
+         await this.service.verifyForgotPasswordOtp(email, otp, 'user');
+         res.status(200).json(
+            HttpResponse.success(null, "OTP verified successfully")
          )
       } catch (error) {
          next(error)

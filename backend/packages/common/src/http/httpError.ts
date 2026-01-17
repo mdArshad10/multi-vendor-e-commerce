@@ -2,12 +2,13 @@
 class ErrorHandler extends Error {
     constructor(
         public readonly message: string,
-        private readonly statusCode: number,
+        public readonly statusCode: number,
         private readonly isOperational: boolean = true,
         private readonly details?: any,
     ) {
         super(message);
         this.name = "HttpError";
+        
 
         Error.captureStackTrace(this, this.constructor);
     }

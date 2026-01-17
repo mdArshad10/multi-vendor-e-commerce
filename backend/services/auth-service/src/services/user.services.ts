@@ -58,6 +58,37 @@ class UserService {
         return { user, accessToken, refreshToken };
     }
 
+    async forgotPassword(email: string, userType: 'user' | 'seller') {
+        const user = userType === 'user' && await this.userRepository.findUserByEmail(email)
+        if (!user) {
+            throw new ValidationError(`${email} is not found`)
+        }
+        await this._trackOtpRequest(email)
+        await this._otpRestriction(email)
+        await this._sendOtp(email, user.name, "user-forgot-password")
+    }
+
+    async updatePassword(email: string, password: string) {
+        const user = await this.userRepository.findUserByEmail(email)
+        if (!user) {
+            throw new ValidationError(`${email} is not found`)
+        }
+        const isPasswordMatch = await bcrypt.compare(password, user.password!);
+        if (!isPasswordMatch) {
+            throw new ValidationError("Password is not same as old")
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await this.userRepository.update({ email }, { password: hashedPassword })
+    }
+
+    async verifyForgotPasswordOtp(email: string, otp: number,userType:'user'|'seller') {
+        const user = userType === 'user' && await this.userRepository.findUserByEmail(email)
+        if (!user) {
+            throw new ValidationError(`${email} is not found`)
+        }
+        await this._verifyOtp(otp, email)
+    }
+
     async _otpRestriction(email: string) {
         const redis = getRedisClient();
 

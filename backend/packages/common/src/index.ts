@@ -3,6 +3,7 @@ export { z } from "zod";
 export * from "./logger"
 export * from "./http"
 export * from "./client"
+export * from "./middlewares/error-handle"
 
 
 // Repository Layer
