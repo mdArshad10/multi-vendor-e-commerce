@@ -4,7 +4,7 @@ import { createEnv, z } from "@multi-vendor-e-commerce/common";
 
 const envSchema = z.object({
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-    PORT: z.coerce.number().default(3000),
+    AUTH_SERVICE_PORT: z.string().default("3000"),
     NODEMAILER_HOST: z.string(),
     NODEMAILER_PORT: z.coerce.number(),
     NODEMAILER_USER: z.string(),
@@ -13,6 +13,8 @@ const envSchema = z.object({
     JWT_EXPIRES_IN: z.string(),
     REFRESH_TOKEN_SECRET: z.string(),
     REFRESH_TOKEN_EXPIRES_IN: z.string(),
+    INTERNAL_TOKEN_SECRET:z.string(),
+    INTERNAL_TOKEN_EXPIRES_IN: z.string(),
 })
 
 type EnvType = z.infer<typeof envSchema>;

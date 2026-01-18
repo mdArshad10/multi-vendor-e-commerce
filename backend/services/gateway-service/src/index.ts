@@ -11,6 +11,8 @@ const main = async () => {
         const port = env.GATEWAY_SERVICE_PORT;
         server.listen(port, () => {
             console.log(`Gateway service is running at port ${port}`);
+            console.log(`Auth-services port => ${env.AUTH_SERVICE_PORT}`);
+
         })
 
         const shutdown = () => {

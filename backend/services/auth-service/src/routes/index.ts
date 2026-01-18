@@ -1,4 +1,3 @@
-import { createApp } from "@/app";
 import { env } from "@/config/env";
 import type { Router } from "express";
 
@@ -10,7 +9,7 @@ export const registerRoutes = (app: Router) => {
             status: "ok",
             service: "auth-service",
             environment: env.NODE_ENV,
-            port: env.PORT,
+            port: env.AUTH_SERVICE_PORT,
             timestamp: new Date().toISOString(),
             uptime: process.uptime(),
             memory: process.memoryUsage(),

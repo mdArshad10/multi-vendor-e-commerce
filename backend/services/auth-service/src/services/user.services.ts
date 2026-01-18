@@ -1,9 +1,9 @@
 import { UserRepository } from "@/repository/user.repository";
-import { getRedisClient, ValidationError } from "@multi-vendor-e-commerce/common";
+import { getRedisClient, jwt, ValidationError } from "@multi-vendor-e-commerce/common";
 import crypto from "crypto";
 import { sendEmail } from "@/utils/sendEmail";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+
 import { env } from "@/config/env";
 
 class UserService {
@@ -22,8 +22,8 @@ class UserService {
 
     async verifyUser(email: string, otp: number, password: string, name: string) {
         const user = await this.userRepository.findUserByEmail(email);
-        if (!user) {
-            throw new ValidationError("User not found")
+        if (user) {
+            throw new ValidationError("User already exist with this email")
         }
         await this._verifyOtp(otp, email);
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -74,20 +74,33 @@ class UserService {
             throw new ValidationError(`${email} is not found`)
         }
         const isPasswordMatch = await bcrypt.compare(password, user.password!);
-        if (!isPasswordMatch) {
+        if (isPasswordMatch) {
             throw new ValidationError("Password is not same as old")
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         await this.userRepository.update({ email }, { password: hashedPassword })
     }
 
-    async verifyForgotPasswordOtp(email: string, otp: number,userType:'user'|'seller') {
+    async verifyForgotPasswordOtp(email: string, otp: number, userType: 'user' | 'seller') {
         const user = userType === 'user' && await this.userRepository.findUserByEmail(email)
         if (!user) {
             throw new ValidationError(`${email} is not found`)
         }
         await this._verifyOtp(otp, email)
     }
+
+    async getUser(id: string) {
+        const user = await this.userRepository.findById({ id });
+        if (!user) {
+            throw new ValidationError("user not found or invalidate payload")
+        }
+        if (user?.password) {
+            const { password = null, ...safeUser } = user;
+            return safeUser;
+        }
+        return user;
+    }
+
 
     async _otpRestriction(email: string) {
         const redis = getRedisClient();
@@ -109,8 +122,8 @@ class UserService {
     async _sendOtp(email: string, name: string, template: string) {
         const otp = crypto.randomInt(1000, 9999).toString();
         const redis = getRedisClient();
-        // after sending email
-        await sendEmail(email, "Verify Your Email", template, { otp, name });
+
+        await sendEmail(email, "Email is send to email", template, { otp, name });
         await redis.set(`otp:${email}`, otp, "EX", 300);
         await redis.set(`otp_cool_down:${email}`, otp, "EX", 60)
     }

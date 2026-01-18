@@ -7,7 +7,7 @@ type ParamsRecord = Record<string, string>;
 type QueryRecord = Record<string, unknown>;
 
 type ValidateRequest = {
-    body: Schema;
+    body?: Schema;
     params?: Schema;
     query?: Schema;
 }
@@ -19,10 +19,11 @@ const formatedError = (error: any) =>
     }));
 
 export const validateRequest = (schema: ValidateRequest) => {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: Request, _res: Response, next: NextFunction) => {
         try {
+
             if (req.body) {
-                const schemaData = schema.body.parse(req.body);
+                const schemaData = schema.body?.parse(req.body) as unknown;
                 req.body = schemaData;
             }
             if (req.params) {
@@ -30,11 +31,16 @@ export const validateRequest = (schema: ValidateRequest) => {
                 req.params = schemaData as Request["params"];
             }
             if (req.query) {
-                const schemaData = schema.query?.parse(req.query) as QueryRecord;
-                req.query = schemaData as Request["query"];
+                const parsedQuery = schema.query?.parse(req.query) as QueryRecord;
+                req.query = parsedQuery as Request["query"];
+
             }
             next();
         } catch (error) {
+            console.log(error);
+            console.log("in validation Request");
+
+
             if (error instanceof ZodError) {
                 next(
                     new ErrorHandler("Validation Error", 422, false, {

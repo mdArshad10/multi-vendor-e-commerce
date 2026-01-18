@@ -81,6 +81,9 @@ importers:
       ioredis:
         specifier: ^5.9.2
         version: 5.9.2
+      jsonwebtoken:
+        specifier: ^9.0.3
+        version: 9.0.3
       nodemailer:
         specifier: ^7.0.12
         version: 7.0.12
@@ -91,6 +94,9 @@ importers:
       '@types/express':
         specifier: ^5.0.6
         version: 5.0.6
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
       '@types/nodemailer':
         specifier: ^7.0.5
         version: 7.0.5
@@ -121,6 +127,9 @@ importers:
       express-rate-limit:
         specifier: ^8.2.1
         version: 8.2.1(express@5.2.1)
+      jsonwebtoken:
+        specifier: ^9.0.3
+        version: 9.0.3
       morgan:
         specifier: ^1.10.1
         version: 1.10.1
@@ -140,6 +149,9 @@ importers:
       '@types/express-http-proxy':
         specifier: ^1.6.7
         version: 1.6.7
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
       '@types/morgan':
         specifier: ^1.9.10
         version: 1.9.10

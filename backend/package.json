@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r --workspace-root=false run build",
-    "dev": "pnpm -r --workspace-root=false run dev"
+    "dev": "pnpm -r --parallel --workspace-root=false run dev"
   },
   "keywords": [],
   "author": "",

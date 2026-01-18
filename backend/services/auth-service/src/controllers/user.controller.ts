@@ -11,7 +11,7 @@ export class UserController {
    async register(req: Request, res: Response, next: NextFunction) {
       try {
          const { name, email } = req.body;
-         await this.service.registerUser(name, email);
+         await this.service.registerUser(email, name);
          res.status(201).json(
             new HttpResponse("User registered successfully", 201, null)
          )
@@ -40,13 +40,15 @@ export class UserController {
             httpOnly: true,
             secure: true,
             sameSite: "strict",
-            maxAge: 15 * 60 * 60 * 1000
+            maxAge: 15 * 60 * 60 * 1000,
+            path: "/"
          })
          res.cookie("refreshToken", user.refreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: "strict",
-            maxAge: 15 * 60 * 60 * 1000
+            maxAge: 15 * 60 * 60 * 1000,
+            path: "/"
          })
          res.status(200).json(
             HttpResponse.success({ data: { id: user.user.id, email: user.user.email } }, "login successfully")
@@ -86,6 +88,40 @@ export class UserController {
          await this.service.verifyForgotPasswordOtp(email, otp, 'user');
          res.status(200).json(
             HttpResponse.success(null, "OTP verified successfully")
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async getUserDetail(req: Request, res: Response, next: NextFunction) {
+      try {
+         const id = req.user.id as string;
+         const user = await this.service.getUser(id);
+         res.status(200).json(
+            new HttpResponse("get user detail", 200, user)
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async logoutUser(req: Request, res: Response, next: NextFunction) {
+      try {
+         res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            path: "/"
+         });
+         res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            path: "/"
+         });
+         res.status(200).json(
+            new HttpResponse("logout successfully", 200, null)
          )
       } catch (error) {
          next(error)

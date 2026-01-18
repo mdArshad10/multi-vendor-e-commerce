@@ -4,7 +4,6 @@ export const userRegisterSchema = z.object({
     body: z.object({
         name: z.string().min(3).max(50),
         email: z.string().email(),
-        password: z.string().min(6).max(50),
         userType: z.enum(["USER", "SELLER"]).default("USER"),
         country: z.string().min(2).max(50).optional(),
         phone: z.string().min(10).max(15).optional(),
@@ -40,6 +39,7 @@ export const userLoginSchema = z.object({
 export const userForgotPasswordSchema = z.object({
     body: z.object({
         email: z.string().email(),
+        password: z.string().min(6).max(50),
     })
 })
 

@@ -10,6 +10,7 @@ import swaggerUi from 'swagger-ui-express'
 import axios from 'axios'
 import { errorHandler } from '@multi-vendor-e-commerce/common'
 import { env } from './config/env'
+import { registerRoutes } from './routes'
 
 
 
@@ -28,8 +29,10 @@ export const createApp = (): Application => {
     app.use(cookieParser())
     app.set("trust proxy", 1)
     app.use(limiter)
-    app.use('/', proxy(`http://localhost:${env.AUTH_SERVICE_PORT}`))// auth-service
+    app.use('/auth', proxy(`http://localhost:3000`))// auth-service
     app.use(errorHandler)
+
+    registerRoutes(app)
 
     return app;
 }

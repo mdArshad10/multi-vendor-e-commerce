@@ -8,7 +8,7 @@ export const registerRoutes = (app: Router) => {
             status: "ok",
             service: "gateway-service",
             environment: env.NODE_ENV,
-            port: env.PORT,
+            port: env.GATEWAY_SERVICE_PORT,
             timestamp: new Date().toISOString(),
             uptime: process.uptime(),
             memory: process.memoryUsage(),

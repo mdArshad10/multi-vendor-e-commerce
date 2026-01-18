@@ -1,12 +1,14 @@
 import Redis from "ioredis"
 import { env } from "../config/createEnv";
 
+
 let redis: Redis | null = null;
 
+const redisUrl = env.REDIS_URL!;
 
 export const getRedisClient = (): Redis => {
     if (!redis) {
-        redis = new Redis(env.REDIS_URL, { lazyConnect: true });
+        redis = new Redis(redisUrl, { lazyConnect: true });
 
         redis.on('error', (error) => {
             console.error({ err: error }, 'Redis connection error');

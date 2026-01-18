@@ -19,8 +19,6 @@ const transporter = nodemailer.createTransport({
 const renderEmailTemplate = async (templateName: string, data: Record<string, any>) => {
     const templatePath = path.join(
         cwd(),
-        "services",
-        "auth-service",
         "src",
         "utils",
         "email-template",
@@ -30,11 +28,14 @@ const renderEmailTemplate = async (templateName: string, data: Record<string, an
 }
 
 export const sendEmail = async (to: string, subject: string, templateName: string, data: Record<string, any>) => {
+    // const from = env.NODEMAILER_USER;
+    const from = "mdarshad@gmail.com";
+    console.log({ to, subject, templateName, data });
 
     try {
         const html = await renderEmailTemplate(templateName, data);
         const info = await transporter.sendMail({
-            from: env.NODEMAILER_USER,
+            from,
             to,
             subject,
             html,
