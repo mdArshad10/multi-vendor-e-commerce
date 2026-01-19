@@ -10,8 +10,8 @@ export class UserController {
 
    async register(req: Request, res: Response, next: NextFunction) {
       try {
-         const { name, email } = req.body;
-         await this.service.registerUser(email, name);
+         const { name, email, userType="user" } = req.body;
+         await this.service.registerUser(email, name,userType);
          res.status(201).json(
             new HttpResponse("User registered successfully", 201, null)
          )
@@ -128,4 +128,25 @@ export class UserController {
       }
    }
 
+   async createShop(req:Request,res:Response, next:NextFunction){
+      try {
+         const {name,bio,address,opening_hour,sellerId,category} = req.body;
+         await this.service.createShop(req.body);
+         res.status(201).json(
+            HttpResponse.created(null,"Shop created Successfully")
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async connectStripAccount(req:Request,res:Response,next:NextFunction){
+      try {
+         const {sellerId} = req.body;
+         await this.service.connectStripAccount(sellerId);
+
+      } catch (error) {
+         next(error)
+      }
+   }
 }

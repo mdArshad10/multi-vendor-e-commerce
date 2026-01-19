@@ -1,13 +1,21 @@
 import { UserController } from "@/controllers/user.controller";
+import { ProductRepository } from "@/repository/product.repository";
+import { SellerRepository } from "@/repository/seller.repository";
 import { UserRepository } from "@/repository/user.repository";
 import UserService from "@/services/user.services";
 import { userForgotPasswordOtpSchema, userForgotPasswordSchema, userLoginSchema, userRegisterSchema, userVerifySchema } from "@/validation/user.validation";
 import { asyncHandler, validateRequest } from "@multi-vendor-e-commerce/common";
 import { Router } from "express";
+import Stripe from "stripe";
 
 const router: Router = Router();
 
-const service = new UserService(new UserRepository())
+const user = new UserRepository();
+const product = new ProductRepository();
+const seller = new SellerRepository();
+const strip = new Stripe("adafsdfasdfadsfadsf");
+
+const service = new UserService(user,product,seller,strip);
 const userController = new UserController(service);
 
 router.route("/register").post(validateRequest({ body: userRegisterSchema.shape.body }), asyncHandler(userController.register.bind(userController)))

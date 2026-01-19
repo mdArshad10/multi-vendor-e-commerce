@@ -5,19 +5,25 @@ import { sendEmail } from "@/utils/sendEmail";
 import bcrypt from "bcryptjs";
 
 import { env } from "@/config/env";
+import { ProductRepository } from "@/repository/product.repository";
+import { SellerRepository } from "@/repository/seller.repository";
+import Stripe from "stripe";
 
 class UserService {
     constructor(
         private readonly userRepository: UserRepository,
+        private readonly productRepository: ProductRepository,
+        private readonly sellerRepository:SellerRepository,
+        private readonly strip:Stripe
     ) { }
 
-    async registerUser(email: string, name: string) {
+    async registerUser(email: string, name: string,userType:"user"|"seller"="user") {
         const user = await this.userRepository.findUserByEmail(email);
         if (user) {
             throw new ValidationError("User already exist with this email")
         }
         await this._otpRestriction(email);
-        await this._sendOtp(email, name, "user-activation-email");
+        await this._sendOtp(email, name,userType=="user"?"user-activation-email":"seller-activation-email");
     }
 
     async verifyUser(email: string, otp: number, password: string, name: string) {
@@ -65,7 +71,7 @@ class UserService {
         }
         await this._trackOtpRequest(email)
         await this._otpRestriction(email)
-        await this._sendOtp(email, user.name, "user-forgot-password")
+        await this._sendOtp(email, user.name, userType === 'user' ? "user-forgot-password":"seller-forgot-password")
     }
 
     async updatePassword(email: string, password: string) {
@@ -99,6 +105,46 @@ class UserService {
             return safeUser;
         }
         return user;
+    }
+
+    async createShop(data:any){
+        const shopData= {
+            ...data
+        }
+        if(data.website && data.website.trim()!==""){
+            shopData.website = data.website
+        }
+        await this.productRepository.create(shopData);
+        return true
+    }
+
+    async connectStripAccount(sellerId:string){
+        const seller = await this.sellerRepository.findById({id:sellerId});
+        if(!seller){
+            throw new ValidationError("seller is not found")
+        }
+        const data = await this.strip.accounts.create({
+            type:"express",
+            email:seller.email,
+            country:"GB",
+            capabilities:{
+                card_payments:{requested:true},
+                transfers:{requested:true}
+            }
+        })
+        await this.sellerRepository.update({
+            id:seller
+        },{
+            stripeId:data.id
+        })
+
+        const accountlink = await this.strip.accountLinks.create({
+            refresh_url:"",
+            return_url:"",
+            account:data.id,
+            type:"account_onboarding"
+        })
+        return accountlink;
     }
 
 
