@@ -14,71 +14,96 @@ datasource db {
 }
 
 model Image {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  fileId String
-  url    String
-  userId String @unique @db.ObjectId
-  shopId String @unique @db.ObjectId
-  user   User?   @relation(fields: [userId], references: [id])
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  fileId   String
+  url      String
+  
+  // User avatar relation
+  userId   String?  @unique @db.ObjectId
+  user     User?    @relation(fields: [userId], references: [id])
+  
+  // Shop avatar relation
+  shopId   String?  @unique @db.ObjectId
+  shop     Shops?   @relation(fields: [shopId], references: [id])
+  
+  // Seller avatar relation
+  sellerId String?  @unique @db.ObjectId
+  seller   Sellers? @relation(fields: [sellerId], references: [id])
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String   @unique
-  password  String?
-  avatar    Image?
-  following String[]
-  followers String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String        @unique
+  password    String?
+  avatar      Image?     
+  following   String[]
+  followers   String[]
+  shopReviews ShopReviews[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
-model Shops{
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  bio String?
-  category String
-  avatar Image?
-  coverBanner String?
-  address String
+model Shops {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  bio           String?
+  category      String
+  avatar        Image?       
+  coverBanner   String?
+  address       String
   opening_hours String?
-  website String?
-  socialLinks Json[]
-  rating Float @default(0)
-  reivews ShopReviews[]
-  sellterId  String @unique @db.ObjectId
-  seller Sellers @relation(fields:[seller],references[id])
-   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  website       String?
+  socialLinks   Json[]
+  rating        Float         @default(0)
+  reviews       ShopReviews[]
+  sellerId      String        @unique @db.ObjectId
+  seller        Sellers       @relation(fields: [sellerId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
-model ShopReviews{
+model ShopReviews {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  user User @relation(fields:[userId], references:[id])
-  rating Float
-  reivews String?
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Float
+  reivews   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  shopId String? @db.ObjectId
-  shops Shops? @relation(fields:[shopId],references:[id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  shopId    String?  @db.ObjectId
+  shops     Shops?   @relation(fields: [shopId], references: [id])
 }
 
-model Sellers{
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String   @unique
-  phone_number String 
-  password  String?
-  country String
-  stripId? String
-  shop Shops? 
-  avatar    Image?
-  following String[]
-  followers String[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Sellers {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  phone_number String
+  password     String?
+  country      String
+  stripId      String?
+  shop         Shops?
+  avatar       Image?  
+  following    String[]
+  followers    String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Site_config{
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  categories   String[]
+  subCategories Json
+}
+
+model discount_code{
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  public_name String
+  discountType String
+  discountValue Float
+  discountCode String @unique
+  sellerId String @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

@@ -1,4 +1,4 @@
-import { prisma, Prisma, PrismaRepository, Product } from "@multi-vendor-e-commerce/common";
+import { prisma, Prisma, PrismaRepository,  } from "@multi-vendor-e-commerce/common";
 
 
 export class ProductRepository extends PrismaRepository<
@@ -12,7 +12,7 @@ export class ProductRepository extends PrismaRepository<
     Prisma.UserOrderByWithRelationInput
 > {
     constructor() {
-        super(prisma.product);
+        super(prisma.users);
     }
 
     

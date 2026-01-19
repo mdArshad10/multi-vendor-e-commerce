@@ -1,7 +1,6 @@
 import { env } from "@/config/env";
-import { ErrorHandler, HttpResponse } from "@multi-vendor-e-commerce/common";
+import { ErrorHandler, HttpResponse, jwt } from "@multi-vendor-e-commerce/common";
 import type { NextFunction, Request, RequestHandler, Response } from "express";
-import jwt from "jsonwebtoken";
 
 interface AccessTokenClaims {
     userId: string;
