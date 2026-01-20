@@ -29,6 +29,9 @@ model Image {
   // Seller avatar relation
   sellerId String?  @unique @db.ObjectId
   seller   Sellers? @relation(fields: [sellerId], references: [id])
+
+  productId String
+  product Products @relation(fields: [productId], references: [id])
 }
 
 model User {
@@ -61,6 +64,7 @@ model Shops {
   seller        Sellers       @relation(fields: [sellerId], references: [id])
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  product Products[]
 }
 
 model ShopReviews {
@@ -106,4 +110,38 @@ model discount_code{
   sellerId String @db.ObjectId
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Products{
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+	slug String
+	category String
+	sub_category String
+	short_description String
+	detailed_description String
+	images Image[]?
+	video_url String?
+	tag String?
+	brand String?
+	colors String[]
+	size String[]
+	starting_date DateTime
+	ending_date DateTime
+	stock Int @default(0)
+	sale_price Float
+	regular_price Float 
+	rating Float
+	warranty String?
+	custom_specification Json?
+	custom_property  Json
+	isDeleted Boolena? 
+	cashOnDelivery String?
+	discount_codes String[]?
+	status String @defult("active");
+	deleteAt DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+	shopId String
+  shop Shop @relation(fields: [shopId], references: [id])
 }
