@@ -15,5 +15,6 @@ export class DiscountCodeRepository extends PrismaRepository<
         super(prisma.discount_code);
     }
 
+
     
 }

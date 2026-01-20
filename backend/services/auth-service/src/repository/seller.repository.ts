@@ -1,8 +1,8 @@
-import { prisma, Prisma, PrismaRepository, seller } from "@multi-vendor-e-commerce/common";
+import { prisma, Prisma, PrismaRepository, Sellers } from "@multi-vendor-e-commerce/common";
 
 
 export class SellerRepository extends PrismaRepository<
-    Seller,
+    Sellers,
     Prisma.UserCreateInput,
     Prisma.UserUpdateInput,
     Prisma.UserWhereInput,
@@ -12,7 +12,7 @@ export class SellerRepository extends PrismaRepository<
     Prisma.UserOrderByWithRelationInput
 > {
     constructor() {
-        super(prisma.seller);
+        super(prisma.sellers);
     }
 
     async findUserByEmail(email: string) {

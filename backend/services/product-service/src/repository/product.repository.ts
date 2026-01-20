@@ -1,8 +1,8 @@
-import { prisma, Prisma, PrismaRepository,  } from "@multi-vendor-e-commerce/common";
+import { prisma, Prisma, PrismaRepository, Products } from "@multi-vendor-e-commerce/common";
 
 
 export class ProductRepository extends PrismaRepository<
-    Product,
+    Products,
     Prisma.UserCreateInput,
     Prisma.UserUpdateInput,
     Prisma.UserWhereInput,
@@ -12,7 +12,11 @@ export class ProductRepository extends PrismaRepository<
     Prisma.UserOrderByWithRelationInput
 > {
     constructor() {
-        super(prisma.users);
+        super(prisma.products);
+    }
+
+    async findUnique(){
+        
     }
 
     
