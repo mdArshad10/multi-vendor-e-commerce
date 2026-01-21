@@ -9,6 +9,6 @@
         { "path": "./services/auth-service" },
         { "path": "./services/gateway-service" },
         { "path": "./services/product-service" },
-        // { "path": "./services/chat-service" },
+        { "path": "./services/kafka-service" },
     ]
 }
