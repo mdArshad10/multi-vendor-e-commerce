@@ -19,11 +19,11 @@ function RootLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <Header 
+      {/* <Header 
         favoritesCount={5}
         cartCount={3}
         userName="Hello, Arshad!"
-      />
+      /> */}
 
       {/* Main content - child routes render here */}
       <main className="flex-1">
