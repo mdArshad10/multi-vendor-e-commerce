@@ -4,7 +4,7 @@
  * Features:
  * - Works with react-hook-form Controller
  * - Password visibility toggle with icon
- * - Error message display
+ * - Field, FieldLabel, FieldDescription, and FieldError support
  * - Supports all Input props
  */
 
@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Controller } from "react-hook-form";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field";
 import { RiEyeLine, RiEyeOffLine } from "@remixicon/react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +23,8 @@ interface InputControllerProps<T extends FieldValues> {
   name: Path<T>;
   /** Input label */
   label?: string;
+  /** Field description (helper text) */
+  description?: string;
   /** Placeholder text */
   placeholder?: string;
   /** Input type (text, email, password, etc.) */
@@ -33,6 +35,7 @@ interface InputControllerProps<T extends FieldValues> {
   disabled?: boolean;
   /** Auto complete attribute */
   autoComplete?: string;
+  /** Required field indicator */
   required?: boolean;
 }
 
@@ -40,6 +43,7 @@ function InputController<T extends FieldValues>({
   control,
   name,
   label,
+  description,
   placeholder,
   type = "text",
   className,
@@ -57,13 +61,16 @@ function InputController<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field, fieldState: { error } }) => (
-        <div className="space-y-2">
+        <Field data-invalid={!!error}>
           {/* Label */}
           {label && (
-            <Label htmlFor={name} className={cn(error && "text-destructive")}>
+            <FieldLabel htmlFor={name} className={cn(error && "text-destructive")}>
               {label} {required && <sup className="text-destructive">*</sup>}
-            </Label>
+            </FieldLabel>
           )}
+
+          {/* Description */}
+          {description && <FieldDescription>{description}</FieldDescription>}
 
           {/* Input with optional password toggle */}
           <div className="relative">
@@ -78,8 +85,9 @@ function InputController<T extends FieldValues>({
                 "h-11",
                 type === "password" && "pr-10",
                 error && "border-destructive focus-visible:ring-destructive",
-                className,
+                className
               )}
+              aria-invalid={!!error}
             />
 
             {/* Password visibility toggle */}
@@ -105,10 +113,8 @@ function InputController<T extends FieldValues>({
           </div>
 
           {/* Error message */}
-          {error?.message && (
-            <p className="text-sm text-destructive">{error.message}</p>
-          )}
-        </div>
+          {error?.message && <FieldError>{error.message}</FieldError>}
+        </Field>
       )}
     />
   );
