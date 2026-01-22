@@ -4,7 +4,7 @@ export const createDiscountSchema = z.object({
     body: z.object({
         public_name: z.string().trim(),
         discountType: z.string(),
-        discountValue: z.float32(),
+        discountValue: z.int(),
         discountCode: z.string()
     })
 })
