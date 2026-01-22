@@ -10,14 +10,13 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
-import { RiCalendar2Fill, RiDashboard2Fill, RiHome2Fill, RiInbox2Fill, RiSearch2Fill, RiSettings2Fill } from "@remixicon/react";
+import { RiAddBoxLine, RiBankCardLine, RiCalendar2Line, RiCalendarLine, RiCoupon2Line, RiDashboard2Line, RiHome2Fill, RiLogoutBoxLine, RiMenu2Line, RiMenu3Line, RiSettings2Line, RiShoppingBag3Line, RiStore2Line } from "@remixicon/react";
 import { Link } from "@tanstack/react-router";
+import { Button } from "../ui/button";
 
-// main => order, payment
-// product => create, get all prodcut
-// events=> create , get all events
-// controller => index, settings
+
 
 const menuItems = [
     {
@@ -26,12 +25,12 @@ const menuItems = [
             {
                 title: "Order",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiShoppingBag3Line,
             },
             {
                 title: "Payment",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiBankCardLine,
             },
         ]
     },
@@ -40,13 +39,13 @@ const menuItems = [
         component: [
             {
                 title: "Create Product",
-                url: "#",
-                icon: RiHome2Fill,
+                url: "/dashboard/product",
+                icon: RiAddBoxLine,
             },
             {
                 title: "Get all Product",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiStore2Line,
             },
         ]
     },
@@ -56,12 +55,12 @@ const menuItems = [
             {
                 title: "Create Event",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiCalendarLine,
             },
             {
                 title: "Get all Event",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiCalendar2Line,
             },
         ]
     },
@@ -76,7 +75,7 @@ const menuItems = [
             {
                 title: "Settings",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiSettings2Line,
             },
         ]
     },
@@ -86,7 +85,7 @@ const menuItems = [
             {
                 title: "Discount",
                 url: "#",
-                icon: RiHome2Fill,
+                icon: RiCoupon2Line,
             },
         ]
     },
@@ -127,21 +126,26 @@ interface DashboardSidebarProps {
 
 export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ name = "abcd", address = "adsfasdf" }) => {
     return (
-        <Sidebar>
-            <SidebarHeader>
-                <h3 className="text-xl">{name}</h3>
-                <h5 className="text-xs">{address}</h5>
+        <Sidebar variant="floating" collapsible="icon">
+            <SidebarHeader className="flex flex-row items-center justify-between gap-2">
+                <div>
+                    <h3 className="text-xl group-data-[collapsible=icon]:hidden">{name}</h3>
+                    <h5 className="text-xs group-data-[collapsible=icon]:hidden">{address}</h5>
+                </div>
+                <SidebarToggle />
             </SidebarHeader>
             <SidebarContent>
                 <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <Link to={'/'} activeProps={{ className: "bg-muted" }}>
-                                <RiDashboard2Fill />
-                                <span>Dashboard</span>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <SidebarGroup>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton asChild>
+                                <Link to={'/'} activeProps={{ className: "bg-muted" }}>
+                                    <RiDashboard2Line />
+                                    <span>Dashboard</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarGroup>
 
                 </SidebarMenu>
 
@@ -165,9 +169,24 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ name = "abcd
                     )
                 })}
             </SidebarContent>
-            <SidebarFooter >
-                Logout
+            <SidebarFooter className="flex flex-row items-center gap-2 cursor-pointer">
+                <RiLogoutBoxLine /><span className="group-data-[collapsible=icon]:hidden">Logout</span>
             </SidebarFooter>
         </Sidebar>
     )
+}
+
+function SidebarToggle() {
+    const { toggleSidebar, open } = useSidebar();
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="absolute top-4 right-4 group-data-[collapsible=icon]:mb-10" // Position the button in the sidebar
+        >
+            {open ? <RiMenu2Line className="h-4 w-4" /> : <RiMenu3Line className="h-4 w-4" />}
+        </Button>
+    );
 }

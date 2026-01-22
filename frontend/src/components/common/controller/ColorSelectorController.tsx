@@ -9,11 +9,11 @@
  */
 
 import { useState } from "react";
-import { Controller, useFormState } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field";
-import { RiEyeLine, RiEyeOffLine, RiPulseAiFill } from "@remixicon/react";
+import { RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import { cn } from "@/lib/utils";
 import { productColor } from "@/shared/config/productColor";
 import { Button } from "@/components/ui/button";
@@ -70,47 +70,61 @@ function ColorSelectorController<T extends FieldValues>({
                     {description && <FieldDescription>{description}</FieldDescription>}
 
                     {/* Input with optional password toggle */}
-                    <div className="">
-                        {selectedColor.map((color) => {
-                            return (
-                                <Input
-                                    {...field}
-                                    id={name}
-                                    type="color"
-                                    value={color}
-                                    className={cn(
-                                        "h-11",
-                                        error && "border-destructive focus-visible:ring-destructive",
-                                        className
-                                    )}
-                                    aria-invalid={!!error}
-                                />
-                            )
-                        })}
+                    <div className={cn("flex gap-2", selectedColor.length < 8 ? "items-center" : "item-start")}>
+                        <div className="grid grid-cols-8 gap-2">
+                            {selectedColor.map((color, index) => {
+                                return (
+                                    <div key={index} className="relative">
+                                        <Input
+                                            {...field}
+                                            id={name}
+                                            type="color"
+                                            value={color}
+                                            className={cn(
+                                                "h-11 w-11 rounded-full cursor-pointer overflow-hidden border-2 p-0",
+                                            )}
+                                            aria-invalid={!!error}
+                                        />
+                                        <div
+
+                                            onClick={() => setSelectedColor(selectedColor.filter((_, i) => i !== index))}
+                                            className="absolute -top-1 -right-1 cursor-pointer z-10"
+                                        >
+                                            <RiDeleteBinLine size={14} />
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
                         <Button
+                            type="button"
                             onClick={() => setAddColor(true)}
                             variant="outline"
                             size="icon"
+                            className="h-11 w-11"
                         >
-                            <RiPulseAiFill />
+                            <RiAddLine />
                         </Button>
 
-                        {addColor && (
-                            <Input
-                                {...field}
-                                id={name}
-                                type="color"
-                                onChange={(e) => setSelectedColor((prev) => [...prev, e.target.value])}
-                                value={""}
-                                className={cn(
-                                    "h-11",
-                                    error && "border-destructive focus-visible:ring-destructive",
-                                    className
-                                )}
-                                aria-invalid={!!error}
-                            />
-                        )}
                     </div>
+                    {addColor && (
+                        <Input
+                            {...field}
+                            id={name}
+                            type="color"
+                            value={""}
+                            onChange={(e) => {
+                                setSelectedColor([...selectedColor, e.target.value]);
+                                setAddColor(false);
+                            }}
+                            className={cn(
+                                "h-11 w-11 rounded-full cursor-pointer overflow-hidden border-2 p-0",
+                                error && "border-destructive focus-visible:ring-destructive",
+                                className
+                            )}
+                            aria-invalid={!!error}
+                        />
+                    )}
 
                     {/* Error message */}
                     {error?.message && <FieldError>{error.message}</FieldError>}

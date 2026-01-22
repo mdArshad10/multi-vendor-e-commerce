@@ -1,5 +1,6 @@
-import { RiArrowRightSLine, RiHome2Fill } from "@remixicon/react";
-import { Link } from "@tanstack/react-router";
+import { RiHome2Line } from "@remixicon/react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../ui/breadcrumb";
+import React from "react";
 
 
 export interface BreadcrumbItem {
@@ -16,48 +17,39 @@ interface PageHeaderProps {
 
 export const PageHeader = ({ title, breadcrumbs, description, actions }: PageHeaderProps) => {
     return (
-        <div className="page-header">
-            {/* Breadcrumb Navigation */}
-            {breadcrumbs && breadcrumbs.length > 0 && (
-                <nav className="breadcrumb-nav" aria-label="Breadcrumb">
-                    <ol className="breadcrumb-list">
-                        {/* Home Link */}
-                        <li className="breadcrumb-item">
-                            <Link to="/dashboard" className="breadcrumb-link">
-                                <RiHome2Fill size={16} />
-                                <span>Dashboard</span>
-                            </Link>
-                        </li>
-
-                        {/* Breadcrumb Items */}
-                        {breadcrumbs.map((item, index) => {
-                            const isLast = index === breadcrumbs.length - 1;
-
-                            return (
-                                <li key={index} className="breadcrumb-item">
-                                    <RiArrowRightSLine size={16} className="breadcrumb-separator" />
-                                    {item.href && !isLast ? (
-                                        <Link to={item.href} className="breadcrumb-link">
-                                            {item.label}
-                                        </Link>
-                                    ) : (
-                                        <span className="breadcrumb-current">{item.label}</span>
-                                    )}
-                                </li>
-                            );
-                        })}
-                    </ol>
-                </nav>
-            )}
-
+        <div className="page-header mb-4 space-y-4 border-b border-gray-200 pb-6 dark:border-gray-800">
             {/* Page Title & Actions */}
-            <div className="page-header-content">
-                <div className="page-title-wrapper">
-                    <h1 className="page-title">{title}</h1>
-                    {description && <p className="page-description">{description}</p>}
+            <div className="page-header-content flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="page-title-wrapper flex-1 space-y-1">
+                    <h1 className="page-title text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">{title}</h1>
+                    {description && <p className="page-description text-sm text-gray-600 dark:text-gray-400">{description}</p>}
                 </div>
-                {actions && <div className="page-actions">{actions}</div>}
+                {actions && <div className="page-actions flex items-center gap-2">{actions}</div>}
             </div>
+
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/">
+                            <RiHome2Line size={14} />
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+
+                    {breadcrumbs?.map((item, index) => (
+                        <React.Fragment key={index}>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem>
+                                {(index === breadcrumbs.length - 1) ? (
+                                    <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                                ) : (
+                                    <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                                )}
+                            </BreadcrumbItem>
+                        </React.Fragment>
+                    ))}
+
+                </BreadcrumbList>
+            </Breadcrumb>
         </div>
     );
 };
