@@ -16,7 +16,7 @@ import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui
 import { RiEyeLine, RiEyeOffLine } from "@remixicon/react";
 import { cn } from "@/lib/utils";
 
-interface InputControllerProps<T extends FieldValues> {
+interface InputControlProps<T extends FieldValues> {
   /** Form control from useForm */
   control: Control<T>;
   /** Field name (must match schema) */
@@ -39,7 +39,7 @@ interface InputControllerProps<T extends FieldValues> {
   required?: boolean;
 }
 
-function InputController<T extends FieldValues>({
+function InputControl<T extends FieldValues>({
   control,
   name,
   label,
@@ -50,7 +50,7 @@ function InputController<T extends FieldValues>({
   disabled,
   autoComplete,
   required,
-}: InputControllerProps<T>) {
+}: InputControlProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
 
   // Determine actual input type (for password toggle)
@@ -64,7 +64,10 @@ function InputController<T extends FieldValues>({
         <Field data-invalid={!!error}>
           {/* Label */}
           {label && (
-            <FieldLabel htmlFor={name} className={cn(error && "text-destructive")}>
+            <FieldLabel
+              htmlFor={name}
+              className={cn(error && "text-destructive")}
+            >
               {label} {required && <sup className="text-destructive">*</sup>}
             </FieldLabel>
           )}
@@ -85,7 +88,7 @@ function InputController<T extends FieldValues>({
                 "h-11",
                 type === "password" && "pr-10",
                 error && "border-destructive focus-visible:ring-destructive",
-                className
+                className,
               )}
               aria-invalid={!!error}
             />
@@ -120,4 +123,4 @@ function InputController<T extends FieldValues>({
   );
 }
 
-export { InputController };
+export { InputControl };

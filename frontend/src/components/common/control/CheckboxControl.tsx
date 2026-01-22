@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-interface CheckboxControllerProps<T extends FieldValues> {
+interface CheckboxControlProps<T extends FieldValues> {
   /** Form control from useForm */
   control: Control<T>;
   /** Field name (must match schema) */
@@ -26,13 +26,13 @@ interface CheckboxControllerProps<T extends FieldValues> {
   disabled?: boolean;
 }
 
-function CheckboxController<T extends FieldValues>({
+function CheckboxControl<T extends FieldValues>({
   control,
   name,
   label,
   className,
   disabled,
-}: CheckboxControllerProps<T>) {
+}: CheckboxControlProps<T>) {
   return (
     <Controller
       control={control}
@@ -69,4 +69,4 @@ function CheckboxController<T extends FieldValues>({
   );
 }
 
-export { CheckboxController };
+export { CheckboxControl };

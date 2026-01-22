@@ -23,7 +23,7 @@ import { RiEyeLine, RiEyeOffLine } from "@remixicon/react";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
-interface InputGroupControllerProps<T extends FieldValues> {
+interface InputGroupControlProps<T extends FieldValues> {
   /** Form control from useForm */
   control: Control<T>;
   /** Field name (must match schema) */
@@ -48,7 +48,7 @@ interface InputGroupControllerProps<T extends FieldValues> {
   endAddon?: ReactNode;
 }
 
-function InputGroupController<T extends FieldValues>({
+function InputGroupControl<T extends FieldValues>({
   control,
   name,
   label,
@@ -60,7 +60,7 @@ function InputGroupController<T extends FieldValues>({
   required,
   startAddon,
   endAddon,
-}: InputGroupControllerProps<T>) {
+}: InputGroupControlProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
 
   // Determine actual input type (for password toggle)
@@ -139,4 +139,4 @@ function InputGroupController<T extends FieldValues>({
   );
 }
 
-export { InputGroupController };
+export { InputGroupControl };
