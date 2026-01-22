@@ -3,7 +3,7 @@ import { DashboardLayout } from "../../../components/layouts/DashboardLayout"
 const DashboardPage = () => {
     return (
         <DashboardLayout>
-            <DashboardPage />
+            <h1>This is the Home page</h1>
         </DashboardLayout>
     )
 }
