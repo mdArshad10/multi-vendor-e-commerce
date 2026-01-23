@@ -6,7 +6,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useMemo, useState } from "react";
 import { DataTable } from "@/components/common/DataTable";
-import { CreateDiscountCodeModal } from "../compoents/CreateDiscountCode";
+import { CreateDiscountCodeModal } from "../compoents/CreateDiscountCodeModal";
 
 
 

@@ -1,4 +1,4 @@
-import { InputControl } from "@/components/common/control";
+import { InputControl, SelectControl } from "@/components/common/control";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -41,11 +41,15 @@ export const CreateDiscountCodeModal = ({ isOpen, onOpenChange }: CreateDiscount
                             label="Discount Code"
                             placeholder="Enter discount code"
                         />
-                        <InputControl
+                        <SelectControl
                             control={form.control}
                             name="discountType"
                             label="Discount Type"
                             placeholder="Enter discount type"
+                            data={[
+                                { value: "percentage", label: "Percentage" },
+                                { value: "fixed", label: "Fixed" },
+                            ]}
                         />
                         <InputControl
                             control={form.control}
