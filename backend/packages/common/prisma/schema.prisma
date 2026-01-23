@@ -104,7 +104,8 @@ model Site_config {
 model discount_code {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   public_name   String
-  discountValue Int
+  discountType  String
+  discountValue Float
   discountCode  String   @unique
   sellerId      String   @db.ObjectId
   createdAt     DateTime @default(now())

@@ -84,7 +84,7 @@ const menuItems = [
         component: [
             {
                 title: "Discount",
-                url: "#",
+                url: "/dashboard/discount",
                 icon: RiCoupon2Line,
             },
         ]

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardProductRouteImport } from './routes/dashboard/product'
+import { Route as DashboardDiscountRouteImport } from './routes/dashboard/discount'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
@@ -29,6 +30,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const DashboardProductRoute = DashboardProductRouteImport.update({
   id: '/dashboard/product',
   path: '/dashboard/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardDiscountRoute = DashboardDiscountRouteImport.update({
+  id: '/dashboard/discount',
+  path: '/dashboard/discount',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/dashboard/discount': typeof DashboardDiscountRoute
   '/dashboard/product': typeof DashboardProductRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/dashboard/discount': typeof DashboardDiscountRoute
   '/dashboard/product': typeof DashboardProductRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/dashboard/discount': typeof DashboardDiscountRoute
   '/dashboard/product': typeof DashboardProductRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/dashboard/discount'
     | '/dashboard/product'
     | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/dashboard/discount'
     | '/dashboard/product'
     | '/dashboard'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/dashboard/discount'
     | '/dashboard/product'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  DashboardDiscountRoute: typeof DashboardDiscountRoute
   DashboardProductRoute: typeof DashboardProductRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -129,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard/product'
       fullPath: '/dashboard/product'
       preLoaderRoute: typeof DashboardProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/discount': {
+      id: '/dashboard/discount'
+      path: '/dashboard/discount'
+      fullPath: '/dashboard/discount'
+      preLoaderRoute: typeof DashboardDiscountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  DashboardDiscountRoute: DashboardDiscountRoute,
   DashboardProductRoute: DashboardProductRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
