@@ -43,7 +43,6 @@ export const userLoginSchema = z.object({
 export const userForgotPasswordSchema = z.object({
     body: z.object({
         email: z.string().email(),
-        password: z.string().min(6).max(50),
     })
 })
 
@@ -62,7 +61,7 @@ export const userForgotPasswordOtpSchema = z.object({
 })
 
 export const connectStripAccountSchema = z.object({
-    body:z.object({
-        sellerId:z.string()
+    body: z.object({
+        sellerId: z.string()
     })
 })

@@ -20,37 +20,62 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { OtpVerificationCard } from "../components/OtpVerificationCard";
+import { toast } from "sonner";
+import {
+  useForgotPassword,
+  useVerifyForgotPasswordOtp,
+} from "../api/auth.queries";
 
 type Step = "email" | "verify-otp" | "reset-password";
 
 export function ForgotPasswordPage() {
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { mutateAsync, isPending, isSuccess, isError } = useForgotPassword();
+  const { mutateAsync: verifyOtp, isSuccess: isVerifyOtpSuccess } =
+    useVerifyForgotPasswordOtp();
 
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    // TODO: Call forgot password API
-    console.log("Forgot password for:", email);
-
-    // Simulate API call - then show OTP step
-    setTimeout(() => {
-      setIsLoading(false);
-      setStep("verify-otp");
-    }, 1500);
+    if (email.trim() == "") {
+      toast.message("plz fill the email");
+      return;
+    }
+    try {
+      const resp = await mutateAsync(email);
+      if (isSuccess) {
+        toast.success(resp.message);
+        setStep("verify-otp");
+      }
+    } catch (error) {
+      const err = error instanceof Error ? error : (error as Error);
+      if (isError) {
+        toast.error(err.message);
+      }
+    }
   };
 
   const handleVerifyOtp = async (otp: string) => {
-    // TODO: Call verify OTP API
     console.log("Verify OTP:", otp);
+    if (otp.length !== 4 || otp.trim() == "") {
+      toast.warning("plz enter the valid otp");
+      return;
+    }
 
-    // Simulate verification
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // TODO: Navigate to reset password form
-    setStep("reset-password");
+    try {
+      const resp = await verifyOtp({ otp, email });
+      if (isVerifyOtpSuccess) {
+        toast.success(resp.message);
+        setStep("reset-password");
+      }
+    } catch (error) {
+      const err = error instanceof Error ? error : (error as Error);
+      if (isError) {
+        toast.error(err.message);
+      }
+    }
   };
 
   const handleResendOtp = async () => {
@@ -129,8 +154,8 @@ export function ForgotPasswordPage() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full h-11" disabled={isPending}>
+              {isPending ? (
                 <span className="flex items-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Sending code...

@@ -48,8 +48,15 @@ export async function refreshToken(): Promise<{ accessToken: string }> {
 /**
  * Request password reset
  */
-export async function requestPasswordReset(email: string): Promise<void> {
-    return apiClient.post<void>("/auth/forgot-password", { email });
+export async function forgotPassword(email: string): Promise<Response<null>> {
+    return apiClient.post<Response<null>>("/auth/forgot-password", { email });
+}
+
+/**
+ *  verify forgot password OTP
+ */
+export async function verifyForgotPasswordOtp(otp: string, email: string): Promise<Response<null>> {
+    return apiClient.post<Response<null>>("/auth/verify-forgot-password-otp", { otp, email });
 }
 
 /**
@@ -58,3 +65,4 @@ export async function requestPasswordReset(email: string): Promise<void> {
 export async function resetPassword(token: string, newPassword: string): Promise<void> {
     return apiClient.post<void>("/auth/reset-password", { token, newPassword });
 }
+

@@ -30,16 +30,6 @@ router.route("/verify-forgot-password-otp").post(validateRequest({ body: userFor
 
 router.route("/update-password").post(validateRequest({ body: userForgotPasswordSchema.shape.body }), asyncHandler(userController.updatePassword.bind(userController)))
 
-// router.route("/abc").get(asyncHandler(async (req, res) => {
-//     res.json({
-//         message: "abc",
-//     })
-// })).post((req, res) => {
-//     res.json({
-//         message: "abc",
-//         data: req.body
-//     })
-// })
 
 
 export default router;

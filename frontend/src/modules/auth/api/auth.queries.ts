@@ -50,7 +50,7 @@ export function useLogin() {
  */
 export function useRegister() {
     return useMutation({
-        mutationFn: (data: RegisterRequest) => authService.registerUser(data),
+        mutationFn: (data: any) => authService.registerUser(data),
     });
 }
 
@@ -72,9 +72,18 @@ export function useLogout() {
 /**
  * Request password reset mutation
  */
-export function useRequestPasswordReset() {
+export function useForgotPassword() {
     return useMutation({
-        mutationFn: (email: string) => authService.requestPasswordReset(email),
+        mutationFn: (email: string) => authService.forgotPassword(email),
+    });
+}
+
+/**
+ * verify password opt
+ */
+export function useVerifyForgotPasswordOtp() {
+    return useMutation({
+        mutationFn: ({ otp, email }: { otp: string, email: string }) => authService.verifyForgotPasswordOtp(otp, email),
     });
 }
 

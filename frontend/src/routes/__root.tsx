@@ -1,6 +1,6 @@
 /**
  * __root.tsx - Root Layout
- * 
+ *
  * The root route that wraps ALL other routes.
  * Use this for:
  * - Global layout (Navbar, Footer)
@@ -8,13 +8,13 @@
  * - Global context providers
  */
 
-import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { Header } from '@/components/common/Header'
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+// import { Header } from '@/components/common/Header'
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createRootRoute({
   component: RootLayout,
-})
+});
 
 function RootLayout() {
   return (
