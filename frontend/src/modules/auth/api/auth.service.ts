@@ -6,40 +6,15 @@
  */
 // 
 import { apiClient } from "@/shared/api/api-client";
-// import type { LoginRequest, LoginResponse, RegisterRequest, User } from "../types";
+import type { LoginRequest, Response, ResponseLoginData } from "../types/auth.type";
 
-interface LoginRequest {
-    email: string;
-    password: string;
-}
 
-interface RegisterRequest {
-    name: string;
-    email: string;
-    password: string;
-    role?: "customer" | "vendor";
-}
-
-interface LoginResponse {
-    user: User;
-    accessToken: string;
-    refreshToken: string;
-}
-
-interface User {
-    id: string;
-    email: string;
-    name: string;
-    role: "customer" | "vendor" | "admin";
-    avatar?: string;
-    createdAt: string;
-}
 
 /**
  * Login user
  */
-export async function loginUser(credentials: any): Promise<LoginResponse> {
-    return apiClient.post<LoginResponse>("/auth/login", credentials);
+export async function loginUser(credentials: LoginRequest): Promise<Response<ResponseLoginData>> {
+    return apiClient.post<Response<ResponseLoginData>>("/auth/login", credentials);
 }
 
 /**

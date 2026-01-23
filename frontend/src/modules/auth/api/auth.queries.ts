@@ -7,15 +7,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as authService from "./auth.service";
-// import type { LoginRequest, RegisterRequest } from "../types";
+import type { LoginRequest } from "../types/auth.type";
 
-interface LoginRequest {
-
-}
-
-interface RegisterRequest {
-
-}
 /**
  * Query Keys
  * Centralized for cache invalidation

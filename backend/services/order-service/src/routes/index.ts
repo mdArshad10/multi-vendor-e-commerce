@@ -1,15 +1,15 @@
 import { env } from "@/config/env";
-import type { Router } from "express";
+import type { Router, Request, Response } from "express";
 
-import autRouter from "./user.route";
+import productRouter from "./order.route";
 
 export const registerRoutes = (app: Router) => {
-    app.get("/health", (req, res) => {
+    app.get("/health", (req: Request, res: Response) => {
         res.json({
             status: "ok",
-            service: "auth-service",
+            service: "order-service",
             environment: env.NODE_ENV,
-            port: env.AUTH_SERVICE_PORT,
+            port: env.ORDER_SERVICE_PORT,
             timestamp: new Date().toISOString(),
             uptime: process.uptime(),
             memory: process.memoryUsage(),
@@ -17,5 +17,5 @@ export const registerRoutes = (app: Router) => {
         });
     })
 
-    app.use("/", autRouter);
+    app.use("/api/orders", productRouter);
 }

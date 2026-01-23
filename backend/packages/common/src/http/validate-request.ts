@@ -30,10 +30,11 @@ export const validateRequest = (schema: ValidateRequest) => {
                 const schemaData = schema.params?.parse(req.params) as ParamsRecord;
                 req.params = schemaData as Request["params"];
             }
-            if (req.query) {
-                const parsedQuery = schema.query?.parse(req.query) as QueryRecord;
-                req.query = parsedQuery as Request["query"];
-
+            if (req.query && schema.query) {
+                const parsedQuery = schema.query.parse(req.query) as QueryRecord;
+                // req.query is read-only, so we need to mutate the existing object
+                Object.keys(req.query).forEach(key => delete (req.query as QueryRecord)[key]);
+                Object.assign(req.query, parsedQuery);
             }
             next();
         } catch (error) {

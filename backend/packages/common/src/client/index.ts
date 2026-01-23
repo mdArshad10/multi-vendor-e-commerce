@@ -1,4 +1,4 @@
 export * from "./redis";
 export * from "./imagekit"
-export * from '@imagekit/nodejs';
 export * from "./kafka"
+export * as imageKit from "@imagekit/nodejs"

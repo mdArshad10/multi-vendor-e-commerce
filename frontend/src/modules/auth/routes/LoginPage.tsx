@@ -9,9 +9,8 @@
 
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { RiEyeLine, RiEyeOffLine, RiGoogleFill } from "@remixicon/react";
+import { RiGoogleFill } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -21,25 +20,45 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useLogin } from "../api/auth.queries";
+import { toast } from "sonner";
+import { InputControl } from "@/components/common/control";
+
+const loginSchema = yup.object({
+  email: yup.string().trim().email().required(),
+  password: yup
+    .string()
+    .trim()
+    .min(6, "Password must be not less that 6 character")
+    .max(50, "Password must not more that 50 character")
+    .required(),
+});
 
 export function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const form = useForm({
+    resolver: yupResolver(loginSchema),
+  });
+
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const { mutateAsync, isSuccess, isPending, isError } = useLogin();
 
-    // TODO: Implement actual login logic
-    console.log("Login:", { email, password, rememberMe });
+  const handleSubmit = async (data: yup.InferType<typeof loginSchema>) => {
+    try {
+      await mutateAsync(data);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+      if (isSuccess) {
+        toast.success("Login successfully");
+      }
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : (error as Error);
+      if (isError) {
+        toast.error(err.message);
+      }
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -88,10 +107,13 @@ export function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              {/* <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -101,24 +123,33 @@ export function LoginPage() {
                 required
                 autoComplete="email"
                 className="h-11"
+              /> */}
+              <InputControl
+                control={form.control}
+                name="email"
+                label="Email"
+                placeholder="name@example.com"
+                required
+                autoComplete="email"
+                className="h-11"
               />
             </div>
 
             {/* Password Field */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
               <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
+                <InputControl
+                  control={form.control}
+                  type="password"
+                  name="password"
+                  label="Password"
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
                   className="h-11 pr-10"
                 />
-                <button
+
+                {/* <Button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="
@@ -133,7 +164,7 @@ export function LoginPage() {
                   ) : (
                     <RiEyeLine className="h-5 w-5" />
                   )}
-                </button>
+                </Button> */}
               </div>
             </div>
 
@@ -163,8 +194,8 @@ export function LoginPage() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full h-11" disabled={isPending}>
+              {isPending ? (
                 <span className="flex items-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Signing in...

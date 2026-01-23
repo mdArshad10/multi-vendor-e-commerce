@@ -15,7 +15,7 @@ const product = new ProductRepository();
 const seller = new SellerRepository();
 const strip = new Stripe("adafsdfasdfadsfadsf");
 
-const service = new UserService(user,product,seller,strip);
+const service = new UserService(user, product, seller, strip);
 const userController = new UserController(service);
 
 router.route("/register").post(validateRequest({ body: userRegisterSchema.shape.body }), asyncHandler(userController.register.bind(userController)))
@@ -29,6 +29,17 @@ router.route("/forgot-password").post(validateRequest({ body: userForgotPassword
 router.route("/verify-forgot-password-otp").post(validateRequest({ body: userForgotPasswordOtpSchema.shape.body }), asyncHandler(userController.verifyForgotPasswordOtp.bind(userController)))
 
 router.route("/update-password").post(validateRequest({ body: userForgotPasswordSchema.shape.body }), asyncHandler(userController.updatePassword.bind(userController)))
+
+// router.route("/abc").get(asyncHandler(async (req, res) => {
+//     res.json({
+//         message: "abc",
+//     })
+// })).post((req, res) => {
+//     res.json({
+//         message: "abc",
+//         data: req.body
+//     })
+// })
 
 
 export default router;

@@ -3,7 +3,7 @@ import { ProductRepository } from "@/repository/product.repository";
 import { SiteConfigRepository } from "@/repository/site_config.repository";
 import { createDiscountCodeDto } from "@/validation/discountCode.validation";
 import { createProductSchemaValidationDto } from "@/validation/product.validation";
-import { ErrorHandler, ImageKit, imageKitClient, Site_config, ValidationError } from "@multi-vendor-e-commerce/common";
+import { ErrorHandler, imageKit, imageKitClient, Site_config, ValidationError } from "@multi-vendor-e-commerce/common";
 
 export class ProductService {
     constructor(
@@ -57,7 +57,7 @@ export class ProductService {
         return true
     }
 
-    async uploadImageFile(File: any): Promise<ImageKit.FileUploadResponse> {
+    async uploadImageFile(File: any) {
         const response = await imageKitClient.files.upload({
             file: File,
             fileName: `product-${File}.jpg`,

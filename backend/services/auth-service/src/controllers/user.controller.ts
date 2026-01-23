@@ -10,8 +10,8 @@ export class UserController {
 
    async register(req: Request, res: Response, next: NextFunction) {
       try {
-         const { name, email, userType="user" } = req.body;
-         await this.service.registerUser(email, name,userType);
+         const { name, email } = req.body;
+         await this.service.registerUser(email, name);
          res.status(201).json(
             new HttpResponse("User registered successfully", 201, null)
          )
@@ -34,6 +34,7 @@ export class UserController {
 
    async loginUser(req: Request, res: Response, next: NextFunction) {
       try {
+         console.log("Login request body:", req.body);
          const { email, password } = req.body;
          const user = await this.service.loginUser(email, password);
          res.cookie("accessToken", user.accessToken, {
@@ -54,6 +55,7 @@ export class UserController {
             HttpResponse.success({ data: { id: user.user.id, email: user.user.email } }, "login successfully")
          )
       } catch (error) {
+         console.error("Login error:", error);
          next(error)
       }
    }
@@ -128,21 +130,21 @@ export class UserController {
       }
    }
 
-   async createShop(req:Request,res:Response, next:NextFunction){
+   async createShop(req: Request, res: Response, next: NextFunction) {
       try {
-         const {name,bio,address,opening_hour,sellerId,category} = req.body;
+         const { name, bio, address, opening_hour, sellerId, category } = req.body;
          await this.service.createShop(req.body);
          res.status(201).json(
-            HttpResponse.created(null,"Shop created Successfully")
+            HttpResponse.created(null, "Shop created Successfully")
          )
       } catch (error) {
          next(error)
       }
    }
 
-   async connectStripAccount(req:Request,res:Response,next:NextFunction){
+   async connectStripAccount(req: Request, res: Response, next: NextFunction) {
       try {
-         const {sellerId} = req.body;
+         const { sellerId } = req.body;
          await this.service.connectStripAccount(sellerId);
 
       } catch (error) {

@@ -52,11 +52,11 @@ class DatabaseError extends ErrorHandler {
 }
 
 // 6. RateLimit Error
-class RateLimitError extends ErrorHandler {
-    constructor(message = 'Too many request, pls try again later') {
-        super(message, 429);
-    }
-}
+// class RateLimitError extends ErrorHandler {
+//     constructor(message = 'Too many request, pls try again later') {
+//         super(message, 429);
+//     }
+// }
 
 export {
     ErrorHandler,
@@ -65,6 +65,6 @@ export {
     AuthError,
     ForbiddenError,
     DatabaseError,
-    RateLimitError,
+    // RateLimitError,
 };
 

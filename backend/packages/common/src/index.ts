@@ -1,11 +1,11 @@
 export * from "./env";
 export { z } from "zod";
 export * from "./logger";
-export * from "./http";
 export * from "./client";
+export * from "./http";
 export * from "./middlewares/error-handle";
 
-export * as jwt from 'jsonwebtoken';
+export { jwt } from "./utils/jwt";
 
 // Repository Layer
 export * from "./repository/index.js";
