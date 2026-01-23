@@ -28,7 +28,7 @@ interface InputControlProps<T extends FieldValues> {
   /** Placeholder text */
   placeholder?: string;
   /** Input type (text, email, password, etc.) */
-  type?: "text" | "email" | "password" | "number" | "tel" | "url";
+  type?: "text" | "email" | "password" | "number" | "tel" | "url" | "hidden";
   /** Additional class names */
   className?: string;
   /** Disable the input */

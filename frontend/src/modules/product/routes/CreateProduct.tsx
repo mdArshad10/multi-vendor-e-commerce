@@ -30,12 +30,18 @@ const productSchema = yup.object({
     .max(50, "Slug must be at most 50 characters")
     .required(),
   brand: yup.string().trim().required(),
-  stock: yup.number().required(),
+  stock: yup.string().min(1, "Stock is required").required(),
   color: yup.array().min(1, "At least one color is required").required(),
   cashOnDelivery: yup.string().trim().required(),
   category: yup.string().trim().required(),
   sub_category: yup.string().trim().required(),
   description: yup.string().trim().required(),
+  video_url: yup.string().trim().matches(/https?:\/\//, "Invalid URL").required(),
+  sale_price: yup.string().min(1, "Sale price is required").required(),
+  regular_price: yup.string().min(1, "Regular price is required").required(),
+  size: yup.array().min(1, "At least one size is required").required(),
+  discount_code: yup.string().trim().required(),
+  status: yup.string().trim().required(),
 });
 
 const CreateProduct = () => {
@@ -274,11 +280,56 @@ const CreateProduct = () => {
                 placeholder="e.g. iPhone 14 Pro Max"
                 required
               />
+
+              <InputControl
+                name="video_url"
+                control={form.control}
+                label="Video URL"
+                placeholder="e.g. https://www.youtube.com/watch?v=..."
+                type="url"
+                required
+              />
+
+              <InputControl
+                name="sale_price"
+                control={form.control}
+                label="Sale Price"
+                placeholder="e.g. 999.99"
+                type="number"
+                required
+              />
+
+              <InputControl
+                name="regular_price"
+                control={form.control}
+                label="Regular Price"
+                placeholder="e.g. 999.99"
+                type="number"
+                required
+              />
+
+              <InputControl
+                name="status"
+                control={form.control}
+                label="Status"
+                type="hidden"
+                required
+              />
             </div>
 
             {/* Submit Button */}
             <div className="pt-4">
-              <Button type="submit" className="w-full" size="lg">
+              <Button type="button" variant={"secondary"}
+                onClick={() => {
+                  form.setValue("status", "draft");
+                  form.handleSubmit(handleSubmit)();
+                }}
+                className="w-full" size="lg">
+                Draft
+              </Button>
+              <Button type="submit"
+                onClick={() => form.setValue("status", "publish")}
+                className="w-full" size="lg">
                 Create Product
               </Button>
             </div>
