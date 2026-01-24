@@ -7,7 +7,7 @@
  */
 
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { RiMailLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ import { OtpVerificationCard } from "../components/OtpVerificationCard";
 import { toast } from "sonner";
 import {
   useForgotPassword,
+  useResetPassword,
   useVerifyForgotPasswordOtp,
 } from "../api/auth.queries";
 
@@ -31,10 +32,13 @@ type Step = "email" | "verify-otp" | "reset-password";
 export function ForgotPasswordPage() {
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState<string>("");
 
-  const { mutateAsync, isPending, isSuccess, isError } = useForgotPassword();
-  const { mutateAsync: verifyOtp, isSuccess: isVerifyOtpSuccess } =
-    useVerifyForgotPasswordOtp();
+  const navigate = useNavigate();
+
+  const { mutateAsync, isPending } = useForgotPassword();
+  const { mutateAsync: verifyOtp } = useVerifyForgotPasswordOtp();
+  const { mutateAsync: restPassword } = useResetPassword();
 
   const handleSubmitEmail = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,36 +49,26 @@ export function ForgotPasswordPage() {
     }
     try {
       const resp = await mutateAsync(email);
-      if (isSuccess) {
+      if (resp.success) {
         toast.success(resp.message);
         setStep("verify-otp");
       }
     } catch (error) {
       const err = error instanceof Error ? error : (error as Error);
-      if (isError) {
-        toast.error(err.message);
-      }
+      toast.error(err.message);
     }
   };
 
   const handleVerifyOtp = async (otp: string) => {
-    console.log("Verify OTP:", otp);
-    if (otp.length !== 4 || otp.trim() == "") {
-      toast.warning("plz enter the valid otp");
-      return;
-    }
-
     try {
       const resp = await verifyOtp({ otp, email });
-      if (isVerifyOtpSuccess) {
+      if (resp.success) {
         toast.success(resp.message);
         setStep("reset-password");
       }
     } catch (error) {
       const err = error instanceof Error ? error : (error as Error);
-      if (isError) {
-        toast.error(err.message);
-      }
+      toast.error(err.message);
     }
   };
 
@@ -86,10 +80,27 @@ export function ForgotPasswordPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
-  // Show OTP verification step
-  if (step === "verify-otp") {
-    return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+  const handleResetPassword = async () => {
+    try {
+      if (password.trim() !== "") {
+        return;
+      }
+
+      const resp = await restPassword({ email, password });
+      if (resp.success) {
+        toast.success(resp.message);
+        navigate({ to: "/auth/login", replace: true });
+      }
+    } catch (error) {
+      const err = error instanceof Error ? error : (error as Error);
+      toast.error(err.message);
+    }
+  };
+
+  const ForgotPasswordComp = (step: string) => {
+    // Show OTP verification step
+    if (step == "verify-otp") {
+      return (
         <OtpVerificationCard
           email={email}
           type="forgot-password"
@@ -97,14 +108,11 @@ export function ForgotPasswordPage() {
           onResendOtp={handleResendOtp}
           onBack={() => setStep("email")}
         />
-      </div>
-    );
-  }
+      );
+    }
 
-  // TODO: Add reset password form step
-  if (step === "reset-password") {
-    return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+    if (step == "reset-password") {
+      return (
         <Card className="w-full max-w-md text-center">
           <CardHeader>
             <CardTitle>Reset Your Password</CardTitle>
@@ -112,19 +120,45 @@ export function ForgotPasswordPage() {
               Create a new password for your account
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              TODO: Add new password form here
-            </p>
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmitEmail} className="space-y-4">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password">New Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="eg. password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="h-11"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                className="w-full h-11"
+                disabled={isPending || password.trim() === ""}
+                onClick={handleResetPassword}
+              >
+                {isPending ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Password Reset...
+                  </span>
+                ) : (
+                  "Reset Password"
+                )}
+              </Button>
+            </form>
           </CardContent>
         </Card>
-      </div>
-    );
-  }
+      );
+    }
 
-  // Email form
-  return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+    return (
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
@@ -177,6 +211,13 @@ export function ForgotPasswordPage() {
           </div>
         </CardContent>
       </Card>
+    );
+  };
+
+  // Email form
+  return (
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
+      {ForgotPasswordComp(step)}
     </div>
   );
 }

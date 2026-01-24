@@ -23,6 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { RiMailCheckLine, RiLockLine } from "@remixicon/react";
+import { toast } from "sonner";
 
 interface OtpVerificationCardProps {
   /** Email address to show in description */
@@ -47,7 +48,7 @@ function OtpVerificationCard({
   onVerify,
   onResendOtp,
   onBack,
-  otpLength = 6,
+  otpLength = 4,
   resendCooldown = 60,
 }: OtpVerificationCardProps) {
   const [otp, setOtp] = useState<string[]>(new Array(otpLength).fill(""));
@@ -119,7 +120,10 @@ function OtpVerificationCard({
 
   const handleVerify = useCallback(async () => {
     const otpValue = otp.join("");
-    if (otpValue.length !== otpLength) return;
+    if (otpValue.length !== otpLength) {
+      toast.warning("plz enter validate OTP");
+      return;
+    }
 
     setIsVerifying(true);
     try {

@@ -92,7 +92,7 @@ export function useVerifyForgotPasswordOtp() {
  */
 export function useResetPassword() {
     return useMutation({
-        mutationFn: ({ token, newPassword }: { token: string; newPassword: string }) =>
-            authService.resetPassword(token, newPassword),
+        mutationFn: ({ email, password }: { email: string; password: string }) =>
+            authService.resetPassword(email, password),
     });
 }

@@ -3,7 +3,8 @@ interface HttpResponseInterface<T> {
     message: string,
     statusCode: number,
     data: T,
-    meta?: Record<string, unknown>
+    meta?: Record<string, unknown>,
+    success: boolean
 }
 
 export class HttpResponse<T = unknown> {
@@ -12,7 +13,8 @@ export class HttpResponse<T = unknown> {
         private readonly message: string,
         private readonly statusCode: number,
         private readonly data: T,
-        private readonly meta?: Record<string, unknown>
+        private readonly meta?: Record<string, unknown>,
+        private readonly success: boolean = true,
     ) {
 
     }
@@ -26,6 +28,7 @@ export class HttpResponse<T = unknown> {
             message: this.message,
             statusCode: this.statusCode,
             data: this.data,
+            success: this.statusCode >= 200 && this.statusCode <= 300,
             ...(this.meta && { meta: this.meta })
         }
     }

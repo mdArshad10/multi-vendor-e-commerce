@@ -62,7 +62,7 @@ export async function verifyForgotPasswordOtp(otp: string, email: string): Promi
 /**
  * Reset password with token
  */
-export async function resetPassword(token: string, newPassword: string): Promise<void> {
-    return apiClient.post<void>("/auth/reset-password", { token, newPassword });
+export async function resetPassword(email: string, password: string): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/update-password", { email, password });
 }
 
