@@ -6,7 +6,7 @@
  */
 // 
 import { apiClient } from "@/shared/api/api-client";
-import type { LoginRequest, Response, ResponseLoginData } from "../types/auth.type";
+import type { LoginRequest, Response, ResponseLoginData, VerifyUserRequest } from "../types/auth.type";
 
 
 
@@ -20,8 +20,12 @@ export async function loginUser(credentials: LoginRequest): Promise<Response<Res
 /**
  * Register new user
  */
-export async function registerUser(data: any): Promise<User> {
-    return apiClient.post<User>("/auth/register", data);
+export async function registerUser(data: LoginRequest): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/register", data);
+}
+
+export async function verifyUser(data:VerifyUserRequest): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/verify", data);
 }
 
 /**

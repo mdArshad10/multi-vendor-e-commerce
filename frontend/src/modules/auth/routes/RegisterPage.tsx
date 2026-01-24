@@ -20,45 +20,73 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { OtpVerificationCard } from "../components/OtpVerificationCard";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { InputControl } from "@/components/common/control";
+import { useRegister, useVerifyUser } from "../api/auth.queries";
+import { toast } from "sonner";
 
 type Step = "register" | "verify-otp";
 
+const RegisterPageSchema = yup.object({
+  name: yup.string().trim().required(),
+  password: yup
+    .string()
+    .trim()
+    .min(6, "password must be greater then 6 characters")
+    .max(50, "password must be less then 50 characters")
+    .required(),
+  email: yup.string().email().required(),
+});
+
 export function RegisterPage() {
   const [step, setStep] = useState<Step>("register");
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const form = useForm({
+    resolver: yupResolver(RegisterPageSchema),
+  });
 
-    // TODO: Call register API
-    console.log("Register:", { email, name, password });
+  const { mutateAsync: registerUser, isPending } = useRegister();
+  const { mutateAsync: verifyUser } = useVerifyUser();
 
-    // Simulate API call - then show OTP step
-    setTimeout(() => {
-      setIsLoading(false);
-      setStep("verify-otp");
-    }, 1500);
+  const handleSubmit = async (
+    data: yup.InferType<typeof RegisterPageSchema>,
+  ) => {
+    console.log(data);
+
+    try {
+      const resp = await registerUser(data);
+      if (resp.success) {
+        setStep("verify-otp");
+        toast.success(resp.message);
+      }
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message);
+    }
   };
 
   const handleVerifyOtp = async (otp: string) => {
-    // TODO: Call verify OTP API
-    console.log("Verify OTP:", otp);
-
-    // Simulate verification
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // TODO: Navigate to success page or dashboard
-    console.log("Registration complete!");
+    try {
+      const resp = await verifyUser({
+        name: form.getValues("name"),
+        password: form.getValues("password"),
+        email: form.getValues("email"),
+        otp,
+      });
+      if (resp.success) {
+        toast.success(resp.message);
+      }
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message);
+    }
   };
 
   const handleResendOtp = async () => {
     // TODO: Call resend OTP API
-    console.log("Resending OTP to:", email);
+    console.log("Resending OTP to");
 
     // Simulate resend
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -74,7 +102,7 @@ export function RegisterPage() {
     return (
       <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
         <OtpVerificationCard
-          email={email}
+          email={form.getValues("email")}
           type="register"
           onVerify={handleVerifyOtp}
           onResendOtp={handleResendOtp}
@@ -126,9 +154,12 @@ export function RegisterPage() {
           </div>
 
           {/* Registration Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             {/* Name Field */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="name">
                 Name <sup className="text-destructive">*</sup>
               </Label>
@@ -142,27 +173,42 @@ export function RegisterPage() {
                 autoComplete="name"
                 className="h-11"
               />
-            </div>
+            </div> */}
+            <InputControl
+              control={form.control}
+              name="name"
+              label="Name"
+              type="text"
+              placeholder="Enter your name"
+              required
+              className="h-11"
+            />
 
             {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                Email <sup className="text-destructive">*</sup>
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="h-11"
-              />
-            </div>
+            <InputControl
+              control={form.control}
+              name="email"
+              label="Email"
+              type="email"
+              placeholder="name@example.com"
+              required
+              autoComplete="email"
+              className="h-11"
+            />
 
             {/* Password Field */}
-            <div className="space-y-2">
+            <InputControl
+              control={form.control}
+              name="password"
+              label="Password"
+              type="password"
+              placeholder="name@example.com"
+              required
+              className="h-11"
+            />
+
+            {/* Password Field */}
+            {/* <div className="space-y-2">
               <Label htmlFor="password">
                 Password <sup className="text-destructive">*</sup>
               </Label>
@@ -194,11 +240,11 @@ export function RegisterPage() {
                   )}
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full h-11" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full h-11" disabled={isPending}>
+              {isPending ? (
                 <span className="flex items-center gap-2">
                   <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Creating account...

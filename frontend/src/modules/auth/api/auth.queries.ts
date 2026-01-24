@@ -7,7 +7,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as authService from "./auth.service";
-import type { LoginRequest } from "../types/auth.type";
+import type { LoginRequest, VerifyUserRequest } from "../types/auth.type";
 
 /**
  * Query Keys
@@ -50,7 +50,13 @@ export function useLogin() {
  */
 export function useRegister() {
     return useMutation({
-        mutationFn: (data: any) => authService.registerUser(data),
+        mutationFn: (data: LoginRequest) => authService.registerUser(data),
+    });
+}
+
+export function useVerifyUser() {
+    return useMutation({
+        mutationFn: (data: VerifyUserRequest) => authService.verifyUser(data),
     });
 }
 

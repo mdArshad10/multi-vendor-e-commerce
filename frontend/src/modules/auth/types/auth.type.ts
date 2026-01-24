@@ -7,7 +7,12 @@ export interface Response<T> {
 
 export interface LoginRequest {
     email: string;
+    name: string;
+}
+
+export interface VerifyUserRequest extends LoginRequest {
     password: string;
+    otp: string;
 }
 
 export interface ResponseLoginData {
