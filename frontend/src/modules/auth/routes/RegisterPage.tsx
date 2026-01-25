@@ -7,7 +7,7 @@
  */
 
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { RiEyeLine, RiEyeOffLine, RiGoogleFill } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,7 @@ export function RegisterPage() {
   const form = useForm({
     resolver: yupResolver(RegisterPageSchema),
   });
+  const navigate = useNavigate();
 
   const { mutateAsync: registerUser, isPending } = useRegister();
   const { mutateAsync: verifyUser } = useVerifyUser();
@@ -77,6 +78,7 @@ export function RegisterPage() {
       });
       if (resp.success) {
         toast.success(resp.message);
+        navigate({ to: "/auth/login" });
       }
     } catch (error: unknown) {
       const err = error as Error;

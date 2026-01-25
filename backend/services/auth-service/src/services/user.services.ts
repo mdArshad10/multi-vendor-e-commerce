@@ -1,5 +1,5 @@
 import { UserRepository } from "@/repository/user.repository";
-import { getRedisClient, jwt, ValidationError } from "@multi-vendor-e-commerce/common";
+import { ErrorHandler, getRedisClient, jwt, NotFoundError, ValidationError } from "@multi-vendor-e-commerce/common";
 import crypto from "crypto";
 import { sendEmail } from "@/utils/sendEmail";
 import bcrypt from "bcryptjs";
@@ -93,6 +93,30 @@ class UserService {
             throw new ValidationError(`${email} is not found`)
         }
         await this._verifyOtp(otp, email)
+    }
+
+    async createRefreshToken(refreshToken?: string) {
+        if (!refreshToken) {
+            throw new ErrorHandler("Refresh token is not found", 404)
+        }
+
+        const decode = jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET as string) as { id: string, role: string };
+        if (!decode || !decode.role || !decode.id) {
+            throw new ValidationError("Forbidden! Invalid refresh Token")
+        }
+        const user = await this.userRepository.findById({ id: decode.id });
+        if (!user) {
+            throw new NotFoundError('Forbidden User/Seller not found');
+        }
+
+        const createNewRefreshToken = jwt.sign(
+            { id: decode.id, role: decode.role },
+            env.JWT_SECRET as string,
+            { expiresIn: env.JWT_EXPIRES_IN as string as unknown as number }
+        )
+
+        return createNewRefreshToken;
+
     }
 
     async getUser(id: string) {

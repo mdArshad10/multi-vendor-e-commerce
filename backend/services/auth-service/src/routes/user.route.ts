@@ -1,3 +1,4 @@
+import { env } from "@/config/env";
 import { UserController } from "@/controllers/user.controller";
 import { ProductRepository } from "@/repository/product.repository";
 import { SellerRepository } from "@/repository/seller.repository";
@@ -5,6 +6,7 @@ import { UserRepository } from "@/repository/user.repository";
 import UserService from "@/services/user.services";
 import { userForgotPasswordOtpSchema, userForgotPasswordSchema, userLoginSchema, userRegisterSchema, userVerifySchema } from "@/validation/user.validation";
 import { asyncHandler, validateRequest } from "@multi-vendor-e-commerce/common";
+import { InternalAuthMiddleware } from "@multi-vendor-e-commerce/common/src/middlewares";
 import { Router } from "express";
 import Stripe from "stripe";
 
@@ -30,6 +32,7 @@ router.route("/verify-forgot-password-otp").post(validateRequest({ body: userFor
 
 router.route("/update-password").post(validateRequest({ body: userForgotPasswordSchema.shape.body }), asyncHandler(userController.updatePassword.bind(userController)))
 
+router.route("/me").get(InternalAuthMiddleware(env.INTERNAL_TOKEN_SECRET), asyncHandler(userController.getUserDetail.bind(userController)))
 
 
 export default router;

@@ -13,7 +13,7 @@ type ValidateRequest = {
 }
 
 const formatedError = (error: any) =>
-    error.errors.map((issue: any) => ({
+    error?.errors?.map((issue: any) => ({
         path: issue.path.join("."),
         message: issue.message,
     }));

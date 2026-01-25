@@ -22,8 +22,13 @@ const parseAuthorizationHeader = (value: string | undefined): string => {
     return token;
 };
 
-export const getwayAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const gatewayAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.cookies);
+    console.log(req.headers.authorization);
+
+
     const token = req.cookies?.accessToken || parseAuthorizationHeader(req.headers.authorization);
+
     if (!token) {
         return res.status(401).json(
             HttpResponse.unauthorized()
@@ -32,6 +37,7 @@ export const getwayAuthMiddleware = (req: Request, res: Response, next: NextFunc
     try {
 
         const decoded = jwt.verify(token, env.JWT_SECRET) as AccessTokenClaims;
+
         if (!decoded) {
             return res.status(401).json(
                 HttpResponse.unauthorized()
@@ -44,6 +50,7 @@ export const getwayAuthMiddleware = (req: Request, res: Response, next: NextFunc
         }, env.INTERNAL_TOKEN_SECRET as string, {
             expiresIn: env.INTERNAL_TOKEN_EXPIRES_IN as string as unknown as number
         })
+        
 
         req.headers["x-internal-token"] = internalToken;
 

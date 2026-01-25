@@ -9,25 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/_dashboard'
+import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as ProductWishlistProductRouteRouteImport } from './routes/product/wishlistProduct.route'
 import { Route as ProductShoppingCartRouteRouteImport } from './routes/product/shoppingCart.route'
-import { Route as DashboardProductRouteRouteImport } from './routes/dashboard/product.route'
-import { Route as DashboardDiscountRouteRouteImport } from './routes/dashboard/discount.route'
 import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register.route'
 import { Route as AuthLoginRouteRouteImport } from './routes/auth/login.route'
 import { Route as AuthForgotPasswordRouteRouteImport } from './routes/auth/forgot-password.route'
 import { Route as ProductProductidIndexRouteImport } from './routes/product/$productid/index'
+import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
+import { Route as DashboardDashboardProductRouteRouteImport } from './routes/_dashboard/dashboard/product.route'
+import { Route as DashboardDashboardDiscountRouteRouteImport } from './routes/_dashboard/dashboard/discount.route'
 
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductWishlistProductRouteRoute =
@@ -42,16 +47,6 @@ const ProductShoppingCartRouteRoute =
     path: '/product/shoppingCart',
     getParentRoute: () => rootRouteImport,
   } as any)
-const DashboardProductRouteRoute = DashboardProductRouteRouteImport.update({
-  id: '/dashboard/product',
-  path: '/dashboard/product',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardDiscountRouteRoute = DashboardDiscountRouteRouteImport.update({
-  id: '/dashboard/discount',
-  path: '/dashboard/discount',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRegisterRouteRoute = AuthRegisterRouteRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
@@ -72,17 +67,34 @@ const ProductProductidIndexRoute = ProductProductidIndexRouteImport.update({
   path: '/product/$productid/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardDashboardIndexRoute = DashboardDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardDashboardProductRouteRoute =
+  DashboardDashboardProductRouteRouteImport.update({
+    id: '/dashboard/product',
+    path: '/dashboard/product',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardDashboardDiscountRouteRoute =
+  DashboardDashboardDiscountRouteRouteImport.update({
+    id: '/dashboard/discount',
+    path: '/dashboard/discount',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRouteRoute
   '/auth/login': typeof AuthLoginRouteRoute
   '/auth/register': typeof AuthRegisterRouteRoute
-  '/dashboard/discount': typeof DashboardDiscountRouteRoute
-  '/dashboard/product': typeof DashboardProductRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/discount': typeof DashboardDashboardDiscountRouteRoute
+  '/dashboard/product': typeof DashboardDashboardProductRouteRoute
+  '/dashboard': typeof DashboardDashboardIndexRoute
   '/product/$productid': typeof ProductProductidIndexRoute
 }
 export interface FileRoutesByTo {
@@ -90,24 +102,26 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordRouteRoute
   '/auth/login': typeof AuthLoginRouteRoute
   '/auth/register': typeof AuthRegisterRouteRoute
-  '/dashboard/discount': typeof DashboardDiscountRouteRoute
-  '/dashboard/product': typeof DashboardProductRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/discount': typeof DashboardDashboardDiscountRouteRoute
+  '/dashboard/product': typeof DashboardDashboardProductRouteRoute
+  '/dashboard': typeof DashboardDashboardIndexRoute
   '/product/$productid': typeof ProductProductidIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_auth': typeof AuthRoute
+  '/_dashboard': typeof DashboardRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRouteRoute
   '/auth/login': typeof AuthLoginRouteRoute
   '/auth/register': typeof AuthRegisterRouteRoute
-  '/dashboard/discount': typeof DashboardDiscountRouteRoute
-  '/dashboard/product': typeof DashboardProductRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/dashboard/discount': typeof DashboardDashboardDiscountRouteRoute
+  '/_dashboard/dashboard/product': typeof DashboardDashboardProductRouteRoute
+  '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
   '/product/$productid/': typeof ProductProductidIndexRoute
 }
 export interface FileRouteTypes {
@@ -117,10 +131,10 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
-    | '/dashboard/discount'
-    | '/dashboard/product'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
+    | '/dashboard/discount'
+    | '/dashboard/product'
     | '/dashboard'
     | '/product/$productid'
   fileRoutesByTo: FileRoutesByTo
@@ -129,53 +143,61 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
-    | '/dashboard/discount'
-    | '/dashboard/product'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
+    | '/dashboard/discount'
+    | '/dashboard/product'
     | '/dashboard'
     | '/product/$productid'
   id:
     | '__root__'
     | '/'
+    | '/_auth'
+    | '/_dashboard'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
-    | '/dashboard/discount'
-    | '/dashboard/product'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
-    | '/dashboard/'
+    | '/_dashboard/dashboard/discount'
+    | '/_dashboard/dashboard/product'
+    | '/_dashboard/dashboard/'
     | '/product/$productid/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   AuthForgotPasswordRouteRoute: typeof AuthForgotPasswordRouteRoute
   AuthLoginRouteRoute: typeof AuthLoginRouteRoute
   AuthRegisterRouteRoute: typeof AuthRegisterRouteRoute
-  DashboardDiscountRouteRoute: typeof DashboardDiscountRouteRoute
-  DashboardProductRouteRoute: typeof DashboardProductRouteRoute
   ProductShoppingCartRouteRoute: typeof ProductShoppingCartRouteRoute
   ProductWishlistProductRouteRoute: typeof ProductWishlistProductRouteRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
   ProductProductidIndexRoute: typeof ProductProductidIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/product/wishlistProduct': {
@@ -190,20 +212,6 @@ declare module '@tanstack/react-router' {
       path: '/product/shoppingCart'
       fullPath: '/product/shoppingCart'
       preLoaderRoute: typeof ProductShoppingCartRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/product': {
-      id: '/dashboard/product'
-      path: '/dashboard/product'
-      fullPath: '/dashboard/product'
-      preLoaderRoute: typeof DashboardProductRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/discount': {
-      id: '/dashboard/discount'
-      path: '/dashboard/discount'
-      fullPath: '/dashboard/discount'
-      preLoaderRoute: typeof DashboardDiscountRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
@@ -234,19 +242,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductProductidIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_dashboard/dashboard/': {
+      id: '/_dashboard/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardDashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/dashboard/product': {
+      id: '/_dashboard/dashboard/product'
+      path: '/dashboard/product'
+      fullPath: '/dashboard/product'
+      preLoaderRoute: typeof DashboardDashboardProductRouteRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/dashboard/discount': {
+      id: '/_dashboard/dashboard/discount'
+      path: '/dashboard/discount'
+      fullPath: '/dashboard/discount'
+      preLoaderRoute: typeof DashboardDashboardDiscountRouteRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardDashboardDiscountRouteRoute: typeof DashboardDashboardDiscountRouteRoute
+  DashboardDashboardProductRouteRoute: typeof DashboardDashboardProductRouteRoute
+  DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardDashboardDiscountRouteRoute: DashboardDashboardDiscountRouteRoute,
+  DashboardDashboardProductRouteRoute: DashboardDashboardProductRouteRoute,
+  DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   AuthForgotPasswordRouteRoute: AuthForgotPasswordRouteRoute,
   AuthLoginRouteRoute: AuthLoginRouteRoute,
   AuthRegisterRouteRoute: AuthRegisterRouteRoute,
-  DashboardDiscountRouteRoute: DashboardDiscountRouteRoute,
-  DashboardProductRouteRoute: DashboardProductRouteRoute,
   ProductShoppingCartRouteRoute: ProductShoppingCartRouteRoute,
   ProductWishlistProductRouteRoute: ProductWishlistProductRouteRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
   ProductProductidIndexRoute: ProductProductidIndexRoute,
 }
 export const routeTree = rootRouteImport

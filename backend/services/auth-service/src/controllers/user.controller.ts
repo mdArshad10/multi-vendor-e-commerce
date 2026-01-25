@@ -1,3 +1,4 @@
+import { env } from "@/config/env";
 import UserService from "@/services/user.services";
 import { HttpResponse } from "@multi-vendor-e-commerce/common";
 import { NextFunction, Request, Response } from "express";
@@ -23,7 +24,8 @@ export class UserController {
    async verifyUser(req: Request, res: Response, next: NextFunction) {
       try {
          const { email, otp, password, name } = req.body;
-         const user = await this.service.verifyUser(email, otp, password, name);
+         const newUser = await this.service.verifyUser(email, otp, password, name);
+         const { password: userPassword, ...user } = newUser;
          res.status(201).json(
             HttpResponse.created(user)
          )
@@ -39,15 +41,15 @@ export class UserController {
          const user = await this.service.loginUser(email, password);
          res.cookie("accessToken", user.accessToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
             maxAge: 15 * 60 * 60 * 1000,
             path: "/"
          })
          res.cookie("refreshToken", user.refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
             maxAge: 15 * 60 * 60 * 1000,
             path: "/"
          })
@@ -96,9 +98,21 @@ export class UserController {
       }
    }
 
-   async getUserDetail(req: Request, res: Response, next: NextFunction) {
+   async refreshToken(req: Request, res: Response, next: NextFunction) {
       try {
-         const id = req.user.id as string;
+         const refresh_token = req.cookies.refresh_token;
+         const token = await this.service.createRefreshToken(refresh_token);
+         res.status(200).cookie("access_token", token).json(
+            HttpResponse.success(null)
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async getUserDetail(req: any, res: Response, next: NextFunction) {
+      try {
+         const id = req.user.userId as string;
          const user = await this.service.getUser(id);
          res.status(200).json(
             new HttpResponse("get user detail", 200, user)

@@ -1,5 +1,6 @@
 // src/types/express.d.ts
-import { AccessTokenClaims } from '../middlewares/getAuth.middlewar';
+
+import { AccessTokenClaims } from "@multi-vendor-e-commerce/common/src/type/express";
 
 declare global {
     namespace Express {
