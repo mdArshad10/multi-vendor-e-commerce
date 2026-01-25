@@ -4,19 +4,25 @@
  * A simple wrapper around axios for better error handling and interceptors
  */
 
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
-interface ApiErrorResponse {
-    message: string;
-    errors?: Record<string, string[]>;
-    statusCode?: number;
-}
+
+
+// interface ApiErrorResponse {
+//     message: string;
+//     errors?: Record<string, string[]>;
+//     statusCode?: number;
+// }
 
 class ApiClient {
     private axiosInstance: AxiosInstance;
+
+    private isRefreshToken = false;
+    private refreshSubscribe: (() => void)[] = [];// store all failed request
+
 
     constructor(baseURL: string) {
         this.axiosInstance = axios.create({
@@ -24,6 +30,7 @@ class ApiClient {
             headers: {
                 "Content-Type": "application/json",
             },
+            withCredentials: true,
         });
 
         // Request interceptor - Add auth token
@@ -41,19 +48,34 @@ class ApiClient {
         // Response interceptor - Handle errors
         this.axiosInstance.interceptors.response.use(
             (response) => response,
-            (error: AxiosError<ApiErrorResponse>) => {
-                if (error.response) {
-                    // Server responded with error
-                    const message = error.response.data?.message || error.message;
-                    throw new Error(message);
-                } else if (error.request) {
-                    // Request made but no response
-                    throw new Error("No response from server");
-                } else {
-                    // Request setup error
-                    throw new Error(error.message);
+            async (error: any) => {
+
+                const originalRequest = error.config;
+                if (error.response?.status == 401 && !originalRequest?._retry) {
+                    if (this.isRefreshToken) {
+                        return new Promise((resolve) => {
+                            this._subscribeTokenRefresh(() => resolve(this.axiosInstance(originalRequest)))
+                        })
+                    }
+                    originalRequest._retry = true;
+                    this.isRefreshToken = true;
+
+                    try {
+                        //code
+                        await axios.post(`${import.meta.env.BASE_URL}/refresh-token`, {}, { withCredentials: true })
+                        this.isRefreshToken = false;
+                        this._onRefreshSuccess();
+                        return this.axiosInstance(originalRequest);
+                    } catch (error: any) {
+                        this.isRefreshToken = false;
+                        this.refreshSubscribe = [];
+                        this._handleLogout();
+                        return Promise.reject(error)
+                    }
                 }
+                return Promise.reject(error)
             }
+
         );
     }
 
@@ -81,6 +103,25 @@ class ApiClient {
         const response = await this.axiosInstance.delete<T>(endpoint, config);
         return response.data;
     }
+
+    _handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        if (window.location.pathname == "/login") {
+            window.location.href = "/login"
+        }
+    }
+
+    // handle adding a new access token to queued request
+    _subscribeTokenRefresh = (callback: () => void) => {
+        this.refreshSubscribe.push(callback)
+    }
+
+    // execute queued request after refresh
+    _onRefreshSuccess = () => {
+        this.refreshSubscribe.forEach((callback) => callback())
+        this.refreshSubscribe.length = 0;
+    }
+
 }
 
 export const apiClient = new ApiClient(API_BASE_URL);

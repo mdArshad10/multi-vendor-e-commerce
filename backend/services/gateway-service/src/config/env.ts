@@ -8,6 +8,7 @@ const envSchema = z.object({
     JWT_SECRET: z.string(),
     INTERNAL_TOKEN_SECRET: z.string(),
     INTERNAL_TOKEN_EXPIRES_IN: z.string(),
+    FRONTEND_API:z.url()
 })
 
 type EnvType = z.infer<typeof envSchema>;

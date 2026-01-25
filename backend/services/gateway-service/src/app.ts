@@ -10,6 +10,7 @@ import axios from 'axios'
 import { errorHandler } from '@multi-vendor-e-commerce/common'
 import { registerRoutes } from './routes'
 import { loadProxyRoutes } from './utils/proxyLoader'
+import { env } from './config/env'
 
 
 
@@ -20,7 +21,10 @@ export const createApp = (): Application => {
 
     // CORS and basic middleware first
     app.use(cors({
-        origin: "*",
+        origin: env.FRONTEND_API,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        allowedHeaders: ["authorization", "Content-Type"],
+        credentials: true,
     }))
     app.use(morgan("dev"))
     app.use(cookieParser())

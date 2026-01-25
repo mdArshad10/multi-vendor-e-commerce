@@ -35,7 +35,8 @@ export interface User {
     id: string;
     email: string;
     name: string;
-    role: "customer" | "vendor" | "admin";
-    avatar?: string;
+    following: string[];
+    followers: string[];
     createdAt: string;
+    updatedAt: string;
 }

@@ -6,7 +6,7 @@
  */
 // 
 import { apiClient } from "@/shared/api/api-client";
-import type { LoginRequest, Response, ResponseLoginData, VerifyUserRequest } from "../types/auth.type";
+import type { LoginRequest, Response, ResponseLoginData, User, VerifyUserRequest } from "../types/auth.type";
 
 
 
@@ -24,7 +24,7 @@ export async function registerUser(data: LoginRequest): Promise<Response<void>> 
     return apiClient.post<Response<void>>("/auth/register", data);
 }
 
-export async function verifyUser(data:VerifyUserRequest): Promise<Response<void>> {
+export async function verifyUser(data: VerifyUserRequest): Promise<Response<void>> {
     return apiClient.post<Response<void>>("/auth/verify", data);
 }
 
