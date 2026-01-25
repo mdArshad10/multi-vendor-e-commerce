@@ -9,12 +9,15 @@ import { ProductRepository } from "@/repository/product.repository";
 import { SellerRepository } from "@/repository/seller.repository";
 import Stripe from "stripe";
 import { SellerVerifySchema } from "@/validation/seller.validation";
+import { createShopSchema } from "@/validation/shop.validation";
+import { ShopRepository } from "@/repository/shop.respository";
 
 class UserService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly productRepository: ProductRepository,
         private readonly sellerRepository: SellerRepository,
+        private readonly shopRepository: ShopRepository,
         private readonly strip: Stripe
     ) { }
 
@@ -154,14 +157,18 @@ class UserService {
         return user;
     }
 
-    async createShop(data: any) {
+    async createShop(data: z.infer<typeof createShopSchema.shape.body>) {
         const shopData = {
-            ...data
+            name: data.name,
+            category: data.category,
+            opening_hours: data.opening_hour,
+            sellerId: data.sellerId,
+            seller: { connect: { id: data.sellerId } },
+            address: data.address ?? "",
+            bio: data.bio,
+            website: data.website?.trim() || undefined,
         }
-        if (data.website && data.website.trim() !== "") {
-            shopData.website = data.website
-        }
-        await this.productRepository.create(shopData);
+        await this.shopRepository.create(shopData);
         return true
     }
 

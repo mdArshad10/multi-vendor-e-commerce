@@ -3,13 +3,13 @@ import { prisma, Prisma, PrismaRepository, Products } from "@multi-vendor-e-comm
 
 export class ProductRepository extends PrismaRepository<
     Products,
-    Prisma.UserCreateInput,
-    Prisma.UserUpdateInput,
-    Prisma.UserWhereInput,
-    Prisma.UserWhereUniqueInput,
-    Prisma.UserInclude,
-    Prisma.UserSelect,
-    Prisma.UserOrderByWithRelationInput
+    Prisma.ProductsCreateInput,
+    Prisma.ProductsUpdateInput,
+    Prisma.ProductsWhereInput,
+    Prisma.ProductsWhereUniqueInput,
+    Prisma.ProductsInclude,
+    Prisma.ProductsSelect,
+    Prisma.ProductsOrderByWithRelationInput
 > {
     constructor() {
         super(prisma.products);

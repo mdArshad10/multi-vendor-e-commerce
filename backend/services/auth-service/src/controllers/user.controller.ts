@@ -144,7 +144,7 @@ export class UserController {
       }
    }
 
-   async createSeller(req: Request, res: Response, next: NextFunction) {
+   async registerSeller(req: Request, res: Response, next: NextFunction) {
       try {
          const { name, email } = req.body;
          await this.service.registerUser(email, name, "seller");
