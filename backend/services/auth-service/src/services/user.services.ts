@@ -1,5 +1,5 @@
 import { UserRepository } from "@/repository/user.repository";
-import { ErrorHandler, getRedisClient, jwt, NotFoundError, ValidationError } from "@multi-vendor-e-commerce/common";
+import { ErrorHandler, getRedisClient, jwt, NotFoundError, ValidationError, z } from "@multi-vendor-e-commerce/common";
 import crypto from "crypto";
 import { sendEmail } from "@/utils/sendEmail";
 import bcrypt from "bcryptjs";
@@ -8,6 +8,7 @@ import { env } from "@/config/env";
 import { ProductRepository } from "@/repository/product.repository";
 import { SellerRepository } from "@/repository/seller.repository";
 import Stripe from "stripe";
+import { SellerVerifySchema } from "@/validation/seller.validation";
 
 class UserService {
     constructor(
@@ -18,9 +19,11 @@ class UserService {
     ) { }
 
     async registerUser(email: string, name: string, userType: "user" | "seller" = "user") {
-        const user = await this.userRepository.findUserByEmail(email);
+        const user = userType == "user" ?
+            await this.userRepository.findUserByEmail(email) :
+            await this.sellerRepository.findUserByEmail(email);
         if (user) {
-            throw new ValidationError("User already exist with this email")
+            throw new ValidationError(`${userType == "user" ? "User" : ""} already exist with this email`)
         }
         await this._otpRestriction(email);
         await this._sendOtp(email, name, userType == "user" ? "user-activation-email" : "seller-activation-email");
@@ -39,6 +42,26 @@ class UserService {
             password: hashedPassword
         })
         return newUser;
+    }
+
+    async verifySeller(body: z.infer<typeof SellerVerifySchema.shape.body>, userType: "seller") {
+        const seller = await this.sellerRepository.findUserByEmail(body.name);
+        if (seller) {
+            throw new ValidationError("User already exist with this email")
+        }
+        await this._verifyOtp(Number(body.otp), body.email);
+        const hashedPassword = await bcrypt.hash(body.password, 10);
+
+        const newSeller = await this.sellerRepository.create({
+            email: body.email,
+            name: body.name,
+            password: hashedPassword,
+            country: body.country,
+            phone_number: body.phone_number,
+            followers: [],
+            following: []
+        })
+        return newSeller;
     }
 
     async loginUser(email: string, password: string) {

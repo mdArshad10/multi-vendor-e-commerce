@@ -144,6 +144,30 @@ export class UserController {
       }
    }
 
+   async createSeller(req: Request, res: Response, next: NextFunction) {
+      try {
+         const { name, email } = req.body;
+         await this.service.registerUser(email, name, "seller");
+         res.status(200).json(
+            new HttpResponse("Seller registered successfully", 201, null)
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
+   async verifySeller(req: Request, res: Response, next: NextFunction) {
+      try {
+         const newSeller = await this.service.verifySeller(req.body, "seller");
+         const { password, ...seller } = newSeller;
+         res.status(201).json(
+            HttpResponse.created(seller)
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
    async createShop(req: Request, res: Response, next: NextFunction) {
       try {
          const { name, bio, address, opening_hour, sellerId, category } = req.body;
