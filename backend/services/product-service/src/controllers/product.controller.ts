@@ -33,9 +33,25 @@ export class ProductController {
     async getDiscountCodes(req: Request, res: Response, next: NextFunction) {
         try {
             const sellerId = req.user.id;
-            const codes = await this.productService.getAllDiscountCodes(sellerId)
+            const codes = await this.productService.getAllDiscountCodes(sellerId);
+            res.status(200).json(
+                new HttpResponse("get all discount", 200, codes)
+            )
         } catch (error) {
+            next(error)
+        }
+    }
 
+    async deleteDiscountCode(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.user.id;
+            const discountCodeId = req.params.discountId as string;
+            await this.productService.deleteDiscountCode(discountCodeId, userId);
+            res.status(200).json(
+                HttpResponse.success(null, "delete discount successfully")
+            )
+        } catch (error) {
+            next(error)
         }
     }
 }

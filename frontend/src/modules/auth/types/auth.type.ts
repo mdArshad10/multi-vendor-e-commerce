@@ -5,9 +5,14 @@ export interface Response<T> {
     data: T
 }
 
-export interface LoginRequest {
+export interface RegisterRequest {
     email: string;
     name: string;
+}
+
+export interface LoginRequest {
+    email: string;
+    password: string;
 }
 
 export interface VerifyUserRequest extends LoginRequest {
@@ -39,4 +44,17 @@ export interface User {
     followers: string[];
     createdAt: string;
     updatedAt: string;
+}
+
+export interface SellerUser {
+    country: string;
+    email: string;
+    followers: string[] | [];
+    following: string[] | [];
+    id: string;
+    name: string;
+    phone_number: string;
+    stripId: string | null;
+    updatedAt: string;
+    createdAt: string;
 }

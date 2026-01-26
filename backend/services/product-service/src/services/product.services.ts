@@ -47,6 +47,17 @@ export class ProductService {
     }
 
     async deleteDiscountCode(codeId: string, seller: string) {
+        const discountCode = await this.discountCodeRepository.findById({ id: codeId },
+            {
+                select: { id: true, sellerId: true }
+            }
+        );
+
+        if (discountCode?.sellerId !== seller) {
+            throw new ValidationError("Unauthorized access!")
+        }
+
+
         const deletedDiscount = await this.discountCodeRepository.delete({
             sellerId: seller,
             id: codeId

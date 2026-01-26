@@ -6,7 +6,8 @@
  */
 // 
 import { apiClient } from "@/shared/api/api-client";
-import type { LoginRequest, Response, ResponseLoginData, User, VerifyUserRequest } from "../types/auth.type";
+import type { LoginRequest, RegisterRequest, Response, ResponseLoginData, SellerUser, User, VerifyUserRequest } from "../types/auth.type";
+import type { SellerRegistrationData, ShopCreationData } from "../components/SellerRegisterComponent";
 
 
 
@@ -20,7 +21,7 @@ export async function loginUser(credentials: LoginRequest): Promise<Response<Res
 /**
  * Register new user
  */
-export async function registerUser(data: LoginRequest): Promise<Response<void>> {
+export async function registerUser(data: RegisterRequest): Promise<Response<void>> {
     return apiClient.post<Response<void>>("/auth/register", data);
 }
 
@@ -68,5 +69,26 @@ export async function verifyForgotPasswordOtp(otp: string, email: string): Promi
  */
 export async function resetPassword(email: string, password: string): Promise<Response<void>> {
     return apiClient.post<Response<void>>("/auth/update-password", { email, password });
+}
+
+export async function registerSeller(data: RegisterRequest): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/register-seller", data);
+}
+
+export async function verifySeller(data: SellerRegistrationData & { otp: string }): Promise<Response<SellerUser>> {
+    return apiClient.post<Response<SellerUser>>("/auth/verify-seller", data);
+}
+
+export async function createShop(data: ShopCreationData & { sellerId: string }): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/create-shop", data);
+}
+
+export async function connectBank(sellerId: string): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/connect-bank", { sellerId });
+}
+
+
+export async function loginSeller(data: LoginRequest): Promise<Response<void>> {
+    return apiClient.post<Response<void>>("/auth/login-seller", data);
 }
 

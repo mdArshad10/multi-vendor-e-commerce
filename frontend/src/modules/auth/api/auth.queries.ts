@@ -7,7 +7,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as authService from "./auth.service";
-import type { LoginRequest, VerifyUserRequest } from "../types/auth.type";
+import type { LoginRequest, RegisterRequest, VerifyUserRequest } from "../types/auth.type";
+import type { SellerRegistrationData, ShopCreationData } from "../components/SellerRegisterComponent";
 
 /**
  * Query Keys
@@ -15,7 +16,9 @@ import type { LoginRequest, VerifyUserRequest } from "../types/auth.type";
  */
 export const authKeys = {
     all: ["auth"] as const,
+    seller: ["seller"] as const,
     currentUser: () => [...authKeys.all, "currentUser"] as const,
+    currentSeller: () => [...authKeys.seller, "currentSeller"] as const
 };
 
 /**
@@ -50,7 +53,45 @@ export function useLogin() {
  */
 export function useRegister() {
     return useMutation({
-        mutationFn: (data: LoginRequest) => authService.registerUser(data),
+        mutationFn: (data: RegisterRequest) => authService.registerUser(data),
+    });
+}
+
+/**
+ * Register mutation
+ */
+export function useRegisterSeller() {
+    return useMutation({
+        mutationFn: (data: RegisterRequest) => authService.registerSeller(data),
+    });
+}
+
+export function useVerifySeller() {
+    return useMutation({
+        mutationFn: (data: SellerRegistrationData & { otp: string }) => authService.verifySeller(data),
+    });
+}
+
+export function useCreateShop() {
+    return useMutation({
+        mutationFn: (data: ShopCreationData & { sellerId: string }) => authService.createShop(data),
+    });
+}
+
+export function useLoginSeller() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: LoginRequest) => authService.loginSeller(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: authKeys.currentUser() });
+        }
+    });
+}
+
+
+export function useConnectBank() {
+    return useMutation({
+        mutationFn: (sellerId: string) => authService.connectBank(sellerId),
     });
 }
 

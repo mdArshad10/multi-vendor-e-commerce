@@ -15,7 +15,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductWishlistProductRouteRouteImport } from './routes/product/wishlistProduct.route'
 import { Route as ProductShoppingCartRouteRouteImport } from './routes/product/shoppingCart.route'
 import { Route as AuthSellerRegisterRouteRouteImport } from './routes/auth/seller-register.route'
-import { Route as AuthSellerLoginRouteRouteImport } from './routes/auth/seller-login.route'
 import { Route as AuthRegisterRouteRouteImport } from './routes/auth/register.route'
 import { Route as AuthLoginRouteRouteImport } from './routes/auth/login.route'
 import { Route as AuthForgotPasswordRouteRouteImport } from './routes/auth/forgot-password.route'
@@ -52,11 +51,6 @@ const ProductShoppingCartRouteRoute =
 const AuthSellerRegisterRouteRoute = AuthSellerRegisterRouteRouteImport.update({
   id: '/auth/seller-register',
   path: '/auth/seller-register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthSellerLoginRouteRoute = AuthSellerLoginRouteRouteImport.update({
-  id: '/auth/seller-login',
-  path: '/auth/seller-login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRouteRoute = AuthRegisterRouteRouteImport.update({
@@ -102,7 +96,6 @@ export interface FileRoutesByFullPath {
   '/auth/forgot-password': typeof AuthForgotPasswordRouteRoute
   '/auth/login': typeof AuthLoginRouteRoute
   '/auth/register': typeof AuthRegisterRouteRoute
-  '/auth/seller-login': typeof AuthSellerLoginRouteRoute
   '/auth/seller-register': typeof AuthSellerRegisterRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
@@ -116,7 +109,6 @@ export interface FileRoutesByTo {
   '/auth/forgot-password': typeof AuthForgotPasswordRouteRoute
   '/auth/login': typeof AuthLoginRouteRoute
   '/auth/register': typeof AuthRegisterRouteRoute
-  '/auth/seller-login': typeof AuthSellerLoginRouteRoute
   '/auth/seller-register': typeof AuthSellerRegisterRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
@@ -133,7 +125,6 @@ export interface FileRoutesById {
   '/auth/forgot-password': typeof AuthForgotPasswordRouteRoute
   '/auth/login': typeof AuthLoginRouteRoute
   '/auth/register': typeof AuthRegisterRouteRoute
-  '/auth/seller-login': typeof AuthSellerLoginRouteRoute
   '/auth/seller-register': typeof AuthSellerRegisterRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
@@ -149,7 +140,6 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
-    | '/auth/seller-login'
     | '/auth/seller-register'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
@@ -163,7 +153,6 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
-    | '/auth/seller-login'
     | '/auth/seller-register'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
@@ -179,7 +168,6 @@ export interface FileRouteTypes {
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
-    | '/auth/seller-login'
     | '/auth/seller-register'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
@@ -196,7 +184,6 @@ export interface RootRouteChildren {
   AuthForgotPasswordRouteRoute: typeof AuthForgotPasswordRouteRoute
   AuthLoginRouteRoute: typeof AuthLoginRouteRoute
   AuthRegisterRouteRoute: typeof AuthRegisterRouteRoute
-  AuthSellerLoginRouteRoute: typeof AuthSellerLoginRouteRoute
   AuthSellerRegisterRouteRoute: typeof AuthSellerRegisterRouteRoute
   ProductShoppingCartRouteRoute: typeof ProductShoppingCartRouteRoute
   ProductWishlistProductRouteRoute: typeof ProductWishlistProductRouteRoute
@@ -245,13 +232,6 @@ declare module '@tanstack/react-router' {
       path: '/auth/seller-register'
       fullPath: '/auth/seller-register'
       preLoaderRoute: typeof AuthSellerRegisterRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/seller-login': {
-      id: '/auth/seller-login'
-      path: '/auth/seller-login'
-      fullPath: '/auth/seller-login'
-      preLoaderRoute: typeof AuthSellerLoginRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
@@ -329,7 +309,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthForgotPasswordRouteRoute: AuthForgotPasswordRouteRoute,
   AuthLoginRouteRoute: AuthLoginRouteRoute,
   AuthRegisterRouteRoute: AuthRegisterRouteRoute,
-  AuthSellerLoginRouteRoute: AuthSellerLoginRouteRoute,
   AuthSellerRegisterRouteRoute: AuthSellerRegisterRouteRoute,
   ProductShoppingCartRouteRoute: ProductShoppingCartRouteRoute,
   ProductWishlistProductRouteRoute: ProductWishlistProductRouteRoute,

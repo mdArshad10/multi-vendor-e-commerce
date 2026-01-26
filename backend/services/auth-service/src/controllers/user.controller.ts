@@ -122,18 +122,18 @@ export class UserController {
       }
    }
 
-   async logoutUser(req: Request, res: Response, next: NextFunction) {
+   async logoutUser(_req: Request, res: Response, next: NextFunction) {
       try {
          res.clearCookie("accessToken", {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
             path: "/"
          });
          res.clearCookie("refreshToken", {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
             path: "/"
          });
          res.status(200).json(
@@ -147,6 +147,7 @@ export class UserController {
    async registerSeller(req: Request, res: Response, next: NextFunction) {
       try {
          const { name, email } = req.body;
+         console.log(name)
          await this.service.registerUser(email, name, "seller");
          res.status(200).json(
             new HttpResponse("Seller registered successfully", 201, null)
@@ -168,6 +169,56 @@ export class UserController {
       }
    }
 
+   async loginSeller(req: Request, res: Response, next: NextFunction) {
+      try {
+         console.log("Login request body:", req.body);
+         const { email, password } = req.body;
+         const seller = await this.service.loginUser(email, password, "seller");
+         res.cookie("accessToken", seller.accessToken, {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
+            maxAge: 15 * 60 * 60 * 1000,
+            path: "/"
+         })
+         res.cookie("refreshToken", seller.refreshToken, {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
+            maxAge: 15 * 60 * 60 * 1000,
+            path: "/"
+         })
+         res.status(200).json(
+            HttpResponse.success({ data: { id: seller.user.id, email: seller.user.email } }, "login successfully")
+         )
+      } catch (error) {
+         console.error("Login error:", error);
+         next(error)
+      }
+   }
+
+   async logoutSeller(_req: Request, res: Response, next: NextFunction) {
+      try {
+         res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
+            path: "/"
+         });
+         res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: env.NODE_ENV === "production",  // ← false in dev
+            sameSite: "lax",  // ← Use "lax" instead of "strict"
+            path: "/"
+         });
+         res.status(200).json(
+            new HttpResponse("logout successfully", 200, null)
+         )
+      } catch (error) {
+         next(error)
+      }
+   }
+
    async createShop(req: Request, res: Response, next: NextFunction) {
       try {
          const { name, bio, address, opening_hour, sellerId, category } = req.body;
@@ -183,7 +234,11 @@ export class UserController {
    async connectStripAccount(req: Request, res: Response, next: NextFunction) {
       try {
          const { sellerId } = req.body;
-         await this.service.connectStripAccount(sellerId);
+         console.log(sellerId)
+         const seller = await this.service.connectStripAccount(sellerId);
+         res.status(200).json(
+            HttpResponse.success(seller, "Strip account connected successfully")
+         )
 
       } catch (error) {
          next(error)

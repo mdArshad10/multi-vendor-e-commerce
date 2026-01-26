@@ -67,30 +67,30 @@ class UserService {
         return newSeller;
     }
 
-    async loginUser(email: string, password: string) {
-        const user = await this.userRepository.findUserByEmail(email);
+    async loginUser(email: string, password: string, userType: "user" | "seller" = "user") {
+        const user = userType == "user" ? await this.userRepository.findUserByEmail(email) : await this.sellerRepository.findUserByEmail(email);
         if (!user) {
-            throw new ValidationError("User not found")
+            throw new ValidationError(`${userType == "user" ? "User" : "Seller"} not found`)
         }
         const isPasswordMatch = await bcrypt.compare(password, user.password!);
         if (!isPasswordMatch) {
             throw new ValidationError("Invalid password")
         }
         const accessToken = jwt.sign(
-            { userId: user.id, role: 'user' },
+            { userId: user.id, role: userType == "user" ? 'user' : "seller" },
             env.JWT_SECRET as string,
             { expiresIn: env.JWT_EXPIRES_IN as string as unknown as number }
         );
 
         const refreshToken = jwt.sign(
-            { userId: user.id, role: 'user' },
+            { userId: user.id, role: userType == "user" ? 'user' : "seller" },
             env.REFRESH_TOKEN_SECRET,
             { expiresIn: env.REFRESH_TOKEN_EXPIRES_IN as string as unknown as number }
         );
         return { user, accessToken, refreshToken };
     }
 
-    async forgotPassword(email: string, userType: 'user' | 'seller') {
+    async forgotPassword(email: string, userType: 'user' | 'seller' = "user") {
         const user = userType === 'user' && await this.userRepository.findUserByEmail(email)
         if (!user) {
             throw new ValidationError(`${email} is not found`)
@@ -100,7 +100,7 @@ class UserService {
         await this._sendOtp(email, user.name, userType === 'user' ? "user-forgot-password" : "seller-forgot-password")
     }
 
-    async updatePassword(email: string, password: string) {
+    async updatePassword(email: string, password: string, userType: "user" | "seller" = "user") {
         const user = await this.userRepository.findUserByEmail(email)
         if (!user) {
             throw new ValidationError(`${email} is not found`)
@@ -113,7 +113,7 @@ class UserService {
         await this.userRepository.update({ email }, { password: hashedPassword })
     }
 
-    async verifyForgotPasswordOtp(email: string, otp: number, userType: 'user' | 'seller') {
+    async verifyForgotPasswordOtp(email: string, otp: number, userType: 'user' | 'seller' = "user") {
         const user = userType === 'user' && await this.userRepository.findUserByEmail(email)
         if (!user) {
             throw new ValidationError(`${email} is not found`)
@@ -162,7 +162,6 @@ class UserService {
             name: data.name,
             category: data.category,
             opening_hours: data.opening_hour,
-            sellerId: data.sellerId,
             seller: { connect: { id: data.sellerId } },
             address: data.address ?? "",
             bio: data.bio,
@@ -177,6 +176,7 @@ class UserService {
         if (!seller) {
             throw new ValidationError("seller is not found")
         }
+        console.log(seller)
         const data = await this.strip.accounts.create({
             type: "express",
             email: seller.email,
@@ -186,19 +186,20 @@ class UserService {
                 transfers: { requested: true }
             }
         })
-        // await this.sellerRepository.update({
-        //     id: seller.id
-        // }, {
-        //     stripId: data.id
-        // })
-
-        const accountlink = await this.strip.accountLinks.create({
-            refresh_url: "",
-            return_url: "",
+        console.log(data)
+        await this.sellerRepository.update({
+            id: seller.id
+        }, {
+            stripId: data.id
+        })
+        console.log(data)
+        const accountLink = await this.strip.accountLinks.create({
+            refresh_url: "http://localhost:3000/success",
+            return_url: "http://localhost:3000/success",
             account: data.id,
             type: "account_onboarding"
         })
-        return accountlink;
+        return accountLink;
     }
 
 

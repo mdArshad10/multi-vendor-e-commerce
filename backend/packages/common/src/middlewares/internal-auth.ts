@@ -55,7 +55,7 @@ export const IsSeller = (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
-export const IsUser = (req: Request, res: Response, next: NextFunction) => {
+export const IsUser = (req: Request, _res: Response, next: NextFunction) => {
     try {
         const user = req.user as AccessTokenClaims;
         if (user.role != "user") {

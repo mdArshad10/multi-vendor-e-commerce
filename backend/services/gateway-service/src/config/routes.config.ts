@@ -13,7 +13,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/register',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/register' }
     },
@@ -21,7 +21,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/health',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/health' }
     },
@@ -29,7 +29,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/login',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/login' }
     },
@@ -37,7 +37,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/verify',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/verify' }
     },
@@ -45,7 +45,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/forgot-password',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/forgot-password' }
     },
@@ -53,7 +53,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/verify-forgot-password-otp',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/verify-forgot-password-otp' }
     },
@@ -61,7 +61,7 @@ export const routeConfigs: RouteConfig[] = [
         path: '/auth/update-password',
         target: 'http://localhost:3000',
         auth: false,
-        roles: ['user', 'seller'],
+        roles: ['user'],
         rateLimit: 100,
         pathRewrite: { '^/': '/update-password' }
     },
@@ -73,5 +73,47 @@ export const routeConfigs: RouteConfig[] = [
         rateLimit: 100,
         pathRewrite: { '^/': '/me' }
     },
+    {
+        path: '/auth/register-seller',
+        target: 'http://localhost:3000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/register-seller' }
+    },
+    {
+        path: '/auth/verify-seller',
+        target: 'http://localhost:3000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/verify-seller' }
+    },
+    {
+        path: '/auth/login-seller',
+        target: 'http://localhost:3000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/login-seller' }
+    },
+    {
+        path: '/auth/create-shop',
+        target: 'http://localhost:3000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/create-shop' }
+    },
+    {
+        path: '/auth/connect-bank',
+        target: 'http://localhost:3000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/connect-bank' }
+    },
+
+
 
 ]

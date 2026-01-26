@@ -23,8 +23,8 @@ const parseAuthorizationHeader = (value: string | undefined): string => {
 };
 
 export const gatewayAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.cookies);
-    console.log(req.headers.authorization);
+    // console.log(req.cookies);
+    // console.log(req.headers.authorization);
 
 
     const token = req.cookies?.accessToken || parseAuthorizationHeader(req.headers.authorization);

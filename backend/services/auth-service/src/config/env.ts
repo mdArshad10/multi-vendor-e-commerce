@@ -15,6 +15,7 @@ const envSchema = z.object({
     REFRESH_TOKEN_EXPIRES_IN: z.string(),
     INTERNAL_TOKEN_SECRET:z.string(),
     INTERNAL_TOKEN_EXPIRES_IN: z.string(),
+    STRIPE_SECRET_KEY:z.string()
 })
 
 type EnvType = z.infer<typeof envSchema>;

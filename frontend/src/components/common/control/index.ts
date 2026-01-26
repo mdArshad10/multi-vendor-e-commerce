@@ -6,5 +6,6 @@ export * from "./TextareaControl";
 export * from './KeyValueControl';
 export * from './ColorSelectorControl';
 export * from './SelectControl';
+export * from './CustomPropertiesControl';
 
 
