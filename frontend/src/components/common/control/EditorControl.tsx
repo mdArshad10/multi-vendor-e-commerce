@@ -17,38 +17,17 @@ interface EditorControlProps<T extends FieldValues> {
   control: Control<T>;
   /** Field name (must match schema) */
   name: Path<T>;
-  /** Input label */
-  label?: string;
-  /** Field description (helper text) */
-  description?: string;
-  /** Placeholder text */
-  placeholder?: string;
-  /** Additional class names */
-  className?: string;
-  /** Disable the input */
-  disabled?: boolean;
-  /** Auto complete attribute */
-  autoComplete?: string;
-  /** Required field indicator */
-  required?: boolean;
 }
 
 function EditorControl<T extends FieldValues>({
   control,
   name,
-  label,
-  description,
-  placeholder,
-  className,
-  disabled,
-  autoComplete,
-  required,
 }: EditorControlProps<T>) {
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field, fieldState: { error } }) => (
+      render={({ field }) => (
         <>
           <RichTextEditor value={field.value} onChange={field.onChange} />
         </>

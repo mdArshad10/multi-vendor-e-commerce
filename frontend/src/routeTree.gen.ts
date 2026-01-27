@@ -23,6 +23,7 @@ import { Route as ProductProductidIndexRouteImport } from './routes/product/$pro
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
 import { Route as DashboardDashboardProductRouteRouteImport } from './routes/_dashboard/dashboard/product.route'
 import { Route as DashboardDashboardDiscountRouteRouteImport } from './routes/_dashboard/dashboard/discount.route'
+import { Route as DashboardAuthMeRouteRouteImport } from './routes/_dashboard/_auth/me.route'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/_dashboard',
@@ -96,6 +97,11 @@ const DashboardDashboardDiscountRouteRoute =
     path: '/dashboard/discount',
     getParentRoute: () => DashboardRoute,
   } as any)
+const DashboardAuthMeRouteRoute = DashboardAuthMeRouteRouteImport.update({
+  id: '/_auth/me',
+  path: '/me',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/auth/seller-register': typeof AuthSellerRegisterRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
+  '/me': typeof DashboardAuthMeRouteRoute
   '/dashboard/discount': typeof DashboardDashboardDiscountRouteRoute
   '/dashboard/product': typeof DashboardDashboardProductRouteRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/auth/seller-register': typeof AuthSellerRegisterRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
+  '/me': typeof DashboardAuthMeRouteRoute
   '/dashboard/discount': typeof DashboardDashboardDiscountRouteRoute
   '/dashboard/product': typeof DashboardDashboardProductRouteRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/auth/seller-register': typeof AuthSellerRegisterRouteRoute
   '/product/shoppingCart': typeof ProductShoppingCartRouteRoute
   '/product/wishlistProduct': typeof ProductWishlistProductRouteRoute
+  '/_dashboard/_auth/me': typeof DashboardAuthMeRouteRoute
   '/_dashboard/dashboard/discount': typeof DashboardDashboardDiscountRouteRoute
   '/_dashboard/dashboard/product': typeof DashboardDashboardProductRouteRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/auth/seller-register'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
+    | '/me'
     | '/dashboard/discount'
     | '/dashboard/product'
     | '/dashboard'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/auth/seller-register'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
+    | '/me'
     | '/dashboard/discount'
     | '/dashboard/product'
     | '/dashboard'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/auth/seller-register'
     | '/product/shoppingCart'
     | '/product/wishlistProduct'
+    | '/_dashboard/_auth/me'
     | '/_dashboard/dashboard/discount'
     | '/_dashboard/dashboard/product'
     | '/_dashboard/dashboard/'
@@ -303,16 +315,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDashboardDiscountRouteRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/_auth/me': {
+      id: '/_dashboard/_auth/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof DashboardAuthMeRouteRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
 interface DashboardRouteChildren {
+  DashboardAuthMeRouteRoute: typeof DashboardAuthMeRouteRoute
   DashboardDashboardDiscountRouteRoute: typeof DashboardDashboardDiscountRouteRoute
   DashboardDashboardProductRouteRoute: typeof DashboardDashboardProductRouteRoute
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAuthMeRouteRoute: DashboardAuthMeRouteRoute,
   DashboardDashboardDiscountRouteRoute: DashboardDashboardDiscountRouteRoute,
   DashboardDashboardProductRouteRoute: DashboardDashboardProductRouteRoute,
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,

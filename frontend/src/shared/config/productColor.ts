@@ -6,3 +6,4 @@ export const productColor = [
     "#FF00FF",
     "#00FFFF",
 ]
+

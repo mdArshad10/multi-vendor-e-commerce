@@ -83,17 +83,13 @@ const RichTextEditor = ({
       />
       <style>
         {`
-          .ql-toolbar {
-            background-color: #444;
-          }
           .ql-container{
             background:transparent !important;
-             background-color: #444;
              color:white;
           }
           .ql-picker{
-            min-height:200px; 
-            }
+            max-height:200px; 
+          }
           .ql-editor {
             min-height: 250px;
           }
@@ -103,17 +99,15 @@ const RichTextEditor = ({
           .ql-editor.ql-blank::before{
             color:#aaa !important;
           }
-            .ql-picker-options{
-              background: #444 !important;
-              color:white !important;
-            }
-            .ql-picker-item{
-              color:white !important;
-            }
-              .ql-stroke{
-                stroke:white !important;
-              }
-              
+          .ql-picker-options{
+            color:white !important;
+          }
+          .ql-picker-item{
+            color:white !important;
+          }
+          .ql-stroke{
+            stroke:white !important;
+          }
         `}
       </style>
     </div>
