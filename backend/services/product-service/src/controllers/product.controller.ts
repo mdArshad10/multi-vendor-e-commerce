@@ -62,4 +62,20 @@ export class ProductController {
             next(error)
         }
     }
+
+    async uploadFile(req:Request,res:Response,next:NextFunction){
+        try {
+            const file = await this.productService.uploadImageFile(req.body.files)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async deleteFile(req:Request,res:Response,next:NextFunction){
+        try {
+            const id = req.body.fileId;
+        } catch (error) {
+            next(error)
+        }
+    }
 }

@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { createEnv, z } from "@multi-vendor-e-commerce/common";
 
 

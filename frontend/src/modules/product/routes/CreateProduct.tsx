@@ -1,7 +1,5 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/common/PageHeader";
-import { useRef, useState } from "react";
-import { RiUpload2Fill } from "@remixicon/react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,8 +9,12 @@ import {
   TextareaControl,
   ColorSelectorControl,
   SelectControl,
+  CustomPropertiesControl,
 } from "@/components/common/control";
 import { EditorControl } from "@/components/common/control/EditorControl";
+import { SizeSelectorControl } from "@/components/common/control/SizeSelectorControl";
+import ImagePlaceHolder from "../components/ImagePlaceHolder";
+import { apiClient } from "@/shared/api/api-client";
 
 const productSchema = yup.object({
   title: yup.string().trim().required(),
@@ -41,43 +43,76 @@ const productSchema = yup.object({
     .trim()
     .matches(/https?:\/\//, "Invalid URL")
     .required(),
+
   sale_price: yup.string().min(1, "Sale price is required").required(),
   regular_price: yup.string().min(1, "Regular price is required").required(),
   size: yup.array().min(1, "At least one size is required").required(),
   discount_code: yup.string().trim().required(),
   status: yup.string().trim().required(),
+  images: yup.array(yup.mixed().nullable()).required(),
 });
 
 const CreateProduct = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const [file, setFile] = useState<(File | null)[]>([null]);
+  const [images, setImages] = useState<(File | null)[]>([null]);
+  const [_, setOpenImageModal] = useState<boolean>(false);
 
   const form = useForm({
     resolver: yupResolver(productSchema),
   });
 
-  const handleBoxClick = () => {
-    fileInputRef.current?.click();
+  // const handleBoxClick = () => {
+  //   fileInputRef.current?.click();
+  // };
+  const convertFileBase64 = async (file: File) => {
+    return new Promise((resolve, reject) => {
+      const render = new FileReader();
+      render.readAsDataURL(file);
+      render.onload = () => resolve(render.result);
+      render.onerror = (error) => reject(error);
+    });
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      setFile(file);
+  const handleImageChange = async (file: File | null, index: number) => {
+    if (!file) return;
+    try {
+      //code
+      const resp = await apiClient.post(`${import.meta.env.BASE_URL}/`, {file}, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (error: unknown) {
+      //code
     }
+    const updatedImage = [...images];
+
+    updatedImage[index] = file;
+
+    if (index === updatedImage.length - 1 && images?.length < 8) {
+      updatedImage.push(null);
+    }
+
+    setImages(updatedImage);
+    form.setValue("images", updatedImage);
   };
 
-  const handleFileSelect = (files: FileList | null) => {
-    if (files && files.length > 0) {
-      const file = files[0];
-      setFile(file);
-    }
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => {
+      const updatedImage = [...prev];
+      if (index == -1) {
+        updatedImage[0] = null;
+      } else {
+        updatedImage.splice(index, 1);
+      }
+
+      if (!updatedImage.includes(null) && updatedImage.length < 8) {
+        updatedImage.push(null);
+      }
+
+      return updatedImage;
+    });
+    form.setValue("images", images);
   };
 
   const handleSubmit = (data: yup.InferType<typeof productSchema>) => {
@@ -104,7 +139,32 @@ const CreateProduct = () => {
             <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
               Product Images
             </h3>
-            {!file ? (
+            <div>
+              {images.length > 0 && (
+                <ImagePlaceHolder
+                  size="765 X 850"
+                  small={false}
+                  index={0}
+                  onImageChange={handleImageChange}
+                  setOpenImageModal={setOpenImageModal}
+                  onRemove={handleRemoveImage}
+                />
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              {images.slice(1).map((_, index: number) => (
+                <ImagePlaceHolder
+                  size="765 X 850"
+                  small
+                  key={index}
+                  index={index + 1}
+                  onImageChange={handleImageChange}
+                  setOpenImageModal={setOpenImageModal}
+                  onRemove={handleRemoveImage}
+                />
+              ))}
+            </div>
+            {/* {!file ? (
               <div
                 className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
                 onClick={handleBoxClick}
@@ -156,7 +216,7 @@ const CreateProduct = () => {
                   Remove
                 </Button>
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Right Column - Form Fields */}
@@ -276,13 +336,7 @@ const CreateProduct = () => {
               required
             />
 
-            <EditorControl
-              name="description"
-              control={form.control}
-              label="Description"
-              placeholder="e.g. iPhone 14 Pro Max"
-              required
-            />
+            <EditorControl name="description" control={form.control} />
 
             <InputControl
               name="video_url"
@@ -292,6 +346,7 @@ const CreateProduct = () => {
               type="url"
               required
             />
+            <CustomPropertiesControl name="" control={form.control} />
 
             <InputControl
               name="sale_price"
@@ -310,11 +365,15 @@ const CreateProduct = () => {
               type="number"
               required
             />
+            <SizeSelectorControl
+              name="size"
+              control={form.control}
+              label="Size"
+            />
 
             <InputControl
               name="status"
               control={form.control}
-              label="Status"
               type="hidden"
               required
             />

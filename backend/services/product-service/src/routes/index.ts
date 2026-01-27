@@ -17,5 +17,5 @@ export const registerRoutes = (app: Router) => {
         });
     })
 
-    app.use("/api/product", productRouter);
+    app.use("/", productRouter);
 }

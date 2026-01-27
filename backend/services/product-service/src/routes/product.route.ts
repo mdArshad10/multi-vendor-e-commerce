@@ -18,7 +18,7 @@ const controller = new ProductController(productServices);
 const router: Router = Router();
 
 router.route('/create-discount').post(validateRequest({ body: createDiscountSchema.shape.body }))
-
+router.route('/upload-file').post()
 
 
 export default router;
