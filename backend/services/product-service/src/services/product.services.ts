@@ -3,7 +3,7 @@ import { ProductRepository } from "@/repository/product.repository";
 import { SiteConfigRepository } from "@/repository/site_config.repository";
 import { createDiscountCodeDto } from "@/validation/discountCode.validation";
 import { createProductSchemaValidationDto } from "@/validation/product.validation";
-import { ErrorHandler, imageKit, imageKitClient, Site_config, ValidationError } from "@multi-vendor-e-commerce/common";
+import { ErrorHandler, imageKit, imageKitClient, ValidationError } from "@multi-vendor-e-commerce/common";
 
 export class ProductService {
     constructor(
@@ -12,7 +12,7 @@ export class ProductService {
         private readonly siteConfigRepository: SiteConfigRepository
     ) { }
 
-    async getCategories(): Promise<Site_config> {
+    async getCategories() {
         const categories = await this.siteConfigRepository.findFirst();
         if (!categories) {
             new ErrorHandler("Categories not found", 404)

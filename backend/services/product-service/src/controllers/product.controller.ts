@@ -7,7 +7,15 @@ export class ProductController {
         private readonly productService: ProductService
     ) { }
 
-    async getCategories(req: Request, res: Response, next: NextFunction) {
+    async createProduct(req: Request, res: Response, next: NextFunction){
+        try {
+            //code
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getCategories(_req: Request, res: Response, next: NextFunction) {
         try {
             const categories = await this.productService.getCategories();
             res.status(200).json(
