@@ -1,3 +1,4 @@
+import { upload } from "@/config/multer";
 import { ProductController } from "@/controllers/product.controller";
 import { DiscountCodeRepository } from "@/repository/discountCode.repository";
 import { ProductRepository } from "@/repository/product.repository";
@@ -14,11 +15,10 @@ const productServices = new ProductService(discountCodeProduct, productRepositor
 const controller = new ProductController(productServices);
 
 
-
 const router: Router = Router();
 
 router.route('/create-discount').post(validateRequest({ body: createDiscountSchema.shape.body }))
-router.route('/upload-file').post()
+router.route('/upload-file').post(upload.single("file"), asyncHandler(controller.uploadFile.bind(controller)))
 
 
 export default router;

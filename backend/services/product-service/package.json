@@ -16,9 +16,11 @@
   "packageManager": "pnpm@10.28.0",
   "dependencies": {
     "@multi-vendor-e-commerce/common": "workspace:^",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "multer": "^2.0.2"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6"    
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0"
   }
 }

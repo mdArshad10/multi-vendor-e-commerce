@@ -1,10 +1,10 @@
 import { env } from "@/config/env";
-import type { Router,Request,Response } from "express";
+import type { Router, Request, Response } from "express";
 
 import productRouter from "./product.route";
 
 export const registerRoutes = (app: Router) => {
-    app.get("/health", (req:Request, res:Response) => {
+    app.get("/products/health", (_req: Request, res: Response) => {
         res.json({
             status: "ok",
             service: "product-service",
@@ -15,7 +15,7 @@ export const registerRoutes = (app: Router) => {
             memory: process.memoryUsage(),
             version: process.env.npm_package_version || '1.0.0'
         });
-    })
+    });
 
-    app.use("/", productRouter);
+    app.use("/products", productRouter);
 }

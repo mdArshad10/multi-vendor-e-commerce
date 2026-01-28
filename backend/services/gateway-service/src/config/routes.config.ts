@@ -113,7 +113,54 @@ export const routeConfigs: RouteConfig[] = [
         rateLimit: 100,
         pathRewrite: { '^/': '/connect-bank' }
     },
+    {
+        path: '/product/create',
+        target: 'http://localhost:3000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/create' }
+    },
+    {
+        path: '/products/health',
+        target: 'http://localhost:4000',
+        auth: false,
+        roles: [],
+        rateLimit: 1000,
+        pathRewrite: { '^/': '/products/health' }
+    },
 
-
+    {
+        path: '/products/upload-file',
+        target: 'http://localhost:4000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/products/upload-file' }
+    },
+    {
+        path: '/products/delete-image',
+        target: 'http://localhost:4000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/products/delete-image' }
+    },
+    {
+        path: '/products/discount-code',
+        target: 'http://localhost:4000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/discount-code' }
+    },
+    {
+        path: '/products',
+        target: 'http://localhost:4000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/products' }
+    },
 
 ]

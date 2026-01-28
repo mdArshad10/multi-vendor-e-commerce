@@ -1,13 +1,14 @@
 import { ProductService } from "@/services/product.services";
 import { HttpResponse } from "@multi-vendor-e-commerce/common";
 import { NextFunction, Request, Response } from "express";
+import fs from 'fs'
 
 export class ProductController {
     constructor(
         private readonly productService: ProductService
     ) { }
 
-    async createProduct(req: Request, res: Response, next: NextFunction){
+    async createProduct(req: Request, res: Response, next: NextFunction) {
         try {
             //code
         } catch (error) {
@@ -63,15 +64,23 @@ export class ProductController {
         }
     }
 
-    async uploadFile(req:Request,res:Response,next:NextFunction){
+    async uploadFile(req: Request, res: Response, next: NextFunction) {
         try {
-            const file = await this.productService.uploadImageFile(req.body.files)
+
+            const file = await this.productService.uploadImageFile(req.file);
+            console.log(file);
+            res.status(200).json(
+                new HttpResponse("file upload successfully", 200, null)
+            )
         } catch (error) {
+            if (req.file?.path) {
+                fs.unlinkSync(req.file?.path)
+            }
             next(error)
         }
     }
 
-    async deleteFile(req:Request,res:Response,next:NextFunction){
+    async deleteFile(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.body.fileId;
         } catch (error) {

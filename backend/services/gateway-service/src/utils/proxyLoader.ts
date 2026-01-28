@@ -17,7 +17,6 @@ export const loadProxyRoutes = (app: Application) => {
             changeOrigin: true,
             pathRewrite: config.pathRewrite,
         }));
-        console.log(middlewares);
 
         app.use(config.path, ...middlewares);
     });

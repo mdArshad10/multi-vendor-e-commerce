@@ -3,7 +3,8 @@ import { ProductRepository } from "@/repository/product.repository";
 import { SiteConfigRepository } from "@/repository/site_config.repository";
 import { createDiscountCodeDto } from "@/validation/discountCode.validation";
 import { createProductSchemaValidationDto } from "@/validation/product.validation";
-import { ErrorHandler, imageKit, imageKitClient, ValidationError } from "@multi-vendor-e-commerce/common";
+import { ErrorHandler, imageKit, imageKitClient, Site_config, ValidationError } from "@multi-vendor-e-commerce/common";
+import fs from 'fs'
 
 export class ProductService {
     constructor(
@@ -12,7 +13,7 @@ export class ProductService {
         private readonly siteConfigRepository: SiteConfigRepository
     ) { }
 
-    async getCategories() {
+    async getCategories(): Promise<Site_config> {
         const categories = await this.siteConfigRepository.findFirst();
         if (!categories) {
             new ErrorHandler("Categories not found", 404)
@@ -68,12 +69,15 @@ export class ProductService {
         return true
     }
 
-    async uploadImageFile(File: any) {
+    async uploadImageFile(file: any) {
         const response = await imageKitClient.files.upload({
-            file: File,
-            fileName: `product-${File}.jpg`,
+            file: fs.createReadStream(file.path),
+            fileName: `product-${file.originalName}.jpg`,
             folder: '/product'
         })
+
+        fs.unlinkSync(file.path);
+
         return response;
     }
     async deleteImageFile(fileId: string) {

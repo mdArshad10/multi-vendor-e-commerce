@@ -64,26 +64,29 @@ const CreateProduct = () => {
   // const handleBoxClick = () => {
   //   fileInputRef.current?.click();
   // };
-  const convertFileBase64 = async (file: File) => {
-    return new Promise((resolve, reject) => {
-      const render = new FileReader();
-      render.readAsDataURL(file);
-      render.onload = () => resolve(render.result);
-      render.onerror = (error) => reject(error);
-    });
-  };
+  // const convertFileBase64 = async (file: File) => {
+  //   return new Promise((resolve, reject) => {
+  //     const render = new FileReader();
+  //     render.readAsDataURL(file);
+  //     render.onload = () => resolve(render.result);
+  //     render.onerror = (error) => reject(error);
+  //   });
+  // };
 
   const handleImageChange = async (file: File | null, index: number) => {
     if (!file) return;
     try {
       //code
-      const resp = await apiClient.post(`${import.meta.env.BASE_URL}/`, {file}, {
+      const formData = new FormData();
+      formData.append("file", file);
+      const resp = await apiClient.post(`/products/upload-file`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+      console.log(resp);
     } catch (error: unknown) {
-      //code
+      console.log(error);
     }
     const updatedImage = [...images];
 
