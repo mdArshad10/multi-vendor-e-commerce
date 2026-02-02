@@ -1,3 +1,4 @@
+import { DiscountCodeService } from "@/services/discount_code.services";
 import { ProductService } from "@/services/product.services";
 import { HttpResponse } from "@multi-vendor-e-commerce/common";
 import { NextFunction, Request, Response } from "express";
@@ -5,7 +6,8 @@ import fs from 'fs'
 
 export class ProductController {
     constructor(
-        private readonly productService: ProductService
+        private readonly productService: ProductService,
+        private readonly discountService: DiscountCodeService
     ) { }
 
     async createProduct(req: Request, res: Response, next: NextFunction) {
@@ -29,8 +31,9 @@ export class ProductController {
 
     async createDiscountCode(req: Request, res: Response, next: NextFunction) {
         try {
-            const sellerId = req.user.id;
-            const code = await this.productService.createDiscountCode(req.body, sellerId);
+            // const sellerId = req.user.id;
+            const sellerId = "6977a8e60ef2c27f652d42f5"
+            const code = await this.discountService.createDiscountCode(req.body, sellerId);
             res.status(201).json(
                 HttpResponse.created(code, "Discount created successfully")
             )
@@ -39,12 +42,14 @@ export class ProductController {
         }
     }
 
-    async getDiscountCodes(req: Request, res: Response, next: NextFunction) {
+    async getAllDiscountCodes(req: Request, res: Response, next: NextFunction) {
         try {
-            const sellerId = req.user.id;
-            const codes = await this.productService.getAllDiscountCodes(sellerId);
+            // const sellerId = req.user.id;
+            const sellerId = "6977a8e60ef2c27f652d42f5"
+            let codes = await this.discountService.getAllDiscountCodes(sellerId);
+            const allCodes = Array.isArray(codes) ? codes : []
             res.status(200).json(
-                new HttpResponse("get all discount", 200, codes)
+                new HttpResponse("get all discount", 200, allCodes)
             )
         } catch (error) {
             next(error)
@@ -55,7 +60,7 @@ export class ProductController {
         try {
             const userId = req.user.id;
             const discountCodeId = req.params.discountId as string;
-            await this.productService.deleteDiscountCode(discountCodeId, userId);
+            await this.discountService.deleteDiscountCode(discountCodeId, userId);
             res.status(200).json(
                 HttpResponse.success(null, "delete discount successfully")
             )
@@ -70,7 +75,7 @@ export class ProductController {
             const file = await this.productService.uploadImageFile(req.file);
             console.log(file);
             res.status(200).json(
-                new HttpResponse("file upload successfully", 200, null)
+                new HttpResponse("file upload successfully", 200, { file_url: file.url, fileName: file.fileId })
             )
         } catch (error) {
             if (req.file?.path) {

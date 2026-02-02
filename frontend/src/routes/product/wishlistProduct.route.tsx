@@ -1,9 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router'
+import LoadingSpinner from "@/components/common/LoadingSpinner";
+import { createFileRoute } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 
-export const Route = createFileRoute('/product/wishlistProduct')({
-  component: RouteComponent,
-})
+const WishlistProductPage = lazy(
+  () => import("@/modules/product/routes/WishlistProduct"),
+);
 
-function RouteComponent() {
-  return <div>Hello "/product/wishlistProduct"!</div>
-}
+export const Route = createFileRoute("/product/wishlistProduct")({
+  component: () => {
+    return (
+      <Suspense fallback={<LoadingSpinner />}>
+        <WishlistProductPage />
+      </Suspense>
+    );
+  },
+});
+
+

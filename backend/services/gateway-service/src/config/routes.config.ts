@@ -147,12 +147,20 @@ export const routeConfigs: RouteConfig[] = [
         pathRewrite: { '^/': '/products/delete-image' }
     },
     {
+        path: '/products/create-discount-code',
+        target: 'http://localhost:4000',
+        auth: false,
+        roles: [],
+        rateLimit: 100,
+        pathRewrite: { '^/': '/products/create-discount-code' }
+    },
+    {
         path: '/products/discount-code',
         target: 'http://localhost:4000',
         auth: false,
         roles: [],
         rateLimit: 100,
-        pathRewrite: { '^/': '/discount-code' }
+        pathRewrite: { '^/': '/products/discount-code' }
     },
     {
         path: '/products',

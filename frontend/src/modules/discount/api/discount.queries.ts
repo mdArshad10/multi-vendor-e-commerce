@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as discountService from "./discount.service";
+import type { createDiscountType } from "../types/discount.type";
 
 /**
  * Get all discounts (query)
@@ -18,7 +19,7 @@ export function useGetProducts() {
  */
 export function useCreateDiscount() {
     return useMutation({
-        mutationFn: (data: any) => discountService.createDisounct(data),
+        mutationFn: (data: createDiscountType) => discountService.createDiscount(data),
     });
 }
 

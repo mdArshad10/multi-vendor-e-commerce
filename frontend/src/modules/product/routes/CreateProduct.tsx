@@ -15,6 +15,7 @@ import { EditorControl } from "@/components/common/control/EditorControl";
 import { SizeSelectorControl } from "@/components/common/control/SizeSelectorControl";
 import ImagePlaceHolder from "../components/ImagePlaceHolder";
 import { apiClient } from "@/shared/api/api-client";
+import type { AxiosResponse } from "axios";
 
 const productSchema = yup.object({
   title: yup.string().trim().required(),
@@ -79,25 +80,28 @@ const CreateProduct = () => {
       //code
       const formData = new FormData();
       formData.append("file", file);
-      const resp = await apiClient.post(`/products/upload-file`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const resp: AxiosResponse = await apiClient.post(
+        `/products/upload-file`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
       console.log(resp);
+      const updatedImage = [...images];
+      updatedImage[index] = resp.data.file_name;
+
+      if (index === images.length - 1 && updatedImage.length < 8) {
+        updatedImage.push(null);
+      }
+
+      setImages(updatedImage);
+      form.setValue("images", updatedImage);
     } catch (error: unknown) {
       console.log(error);
     }
-    const updatedImage = [...images];
-
-    updatedImage[index] = file;
-
-    if (index === updatedImage.length - 1 && images?.length < 8) {
-      updatedImage.push(null);
-    }
-
-    setImages(updatedImage);
-    form.setValue("images", updatedImage);
   };
 
   const handleRemoveImage = (index: number) => {

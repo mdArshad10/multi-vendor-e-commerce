@@ -6,8 +6,9 @@
  */
 // 
 import { apiClient } from "@/shared/api/api-client";
-import type { LoginRequest, RegisterRequest, Response, ResponseLoginData, SellerUser, User, VerifyUserRequest } from "../types/auth.type";
+import type { LoginRequest, RegisterRequest, ResponseLoginData, SellerUser, User, VerifyUserRequest } from "../types/auth.type";
 import type { SellerRegistrationData, ShopCreationData } from "../components/SellerRegisterComponent";
+import type { Response } from "@/types/Response.type";
 
 
 

@@ -1,12 +1,51 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataTable } from "@/components/common/DataTable";
 import { CreateDiscountCodeModal } from "../compoents/CreateDiscountCodeModal";
+import { useDeleteDiscount, useGetProducts } from "../api/discount.queries";
+import { toast } from "sonner";
+import { DeleteDataModal } from "@/components/common/DeleteDataModal";
+
+const DiscountCodeAction = ({ row }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { mutateAsync } = useDeleteDiscount();
+
+  const handleDeleteDiscount = async () => {
+    try {
+      const resp = await mutateAsync(row.original.id);
+      if (resp.success) {
+        toast.success(resp.message);
+      }
+    } catch (err: unknown) {
+      const error =
+        err instanceof Error ? err : { message: "failed to delete discount" };
+      toast.error(error.message);
+    }
+  };
+
+  const handleDeleteButtonModel = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
+
+  return (
+    <>
+      <Button type="button" onClick={handleDeleteButtonModel}>
+        Delete
+      </Button>
+      <DeleteDataModal
+        isOpen={isOpen}
+        title="Delete the Discount Code"
+        description="if you delete this discount code"
+        onDelete={handleDeleteDiscount}
+        onOpenChange={setIsOpen}
+      />
+    </>
+  );
+};
 
 const discountTableColumns: ColumnDef<any>[] = [
   {
@@ -15,11 +54,6 @@ const discountTableColumns: ColumnDef<any>[] = [
     header: ({ table }) => (
       <div className="w-full flex items-center justify-center">
         <Checkbox
-          className="h-3.5 w-3.5"
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -27,7 +61,6 @@ const discountTableColumns: ColumnDef<any>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
-        className="h-3.5 w-3.5"
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
@@ -39,12 +72,8 @@ const discountTableColumns: ColumnDef<any>[] = [
   {
     accessorKey: "discountCode",
     size: 280,
-    header: ({}) => <span>Discount Code</span>,
+    header: () => <span>Discount Code</span>,
     cell: ({ row }) => {
-      let discountCode = row.original.discountCode;
-      let discountType = row.getValue("discountType");
-
-      debugger;
       return (
         <div className={`text-xs text-white font-medium line-clamp-2`}>
           {row.original.discountCode}
@@ -52,17 +81,55 @@ const discountTableColumns: ColumnDef<any>[] = [
       );
     },
   },
+  {
+    accessorKey: "discountType",
+    size: 280,
+    header: () => <span>Discount Type</span>,
+    cell: ({ row }) => {
+      return (
+        <div className={`text-xs text-white font-medium line-clamp-2`}>
+          {row.original.discountType}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "discountValue",
+    size: 280,
+    header: () => <span>Discount Value</span>,
+    cell: ({ row }) => {
+      return (
+        <div className={`text-xs text-white font-medium line-clamp-2`}>
+          {row.original.discountValue}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "public_name",
+    size: 280,
+    header: () => <span>Public Name</span>,
+    cell: ({ row }) => {
+      return (
+        <div className={`text-xs text-white font-medium line-clamp-2`}>
+          {row.original.public_name}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "actions",
+
+    cell: ({ row }) => <DiscountCodeAction row={row} />,
+  },
 ];
 
 const DiscountCodePage = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data } = useGetProducts();
   const columns = useMemo(() => discountTableColumns, []);
-  const data = useState({
-    discountCode: "abcd",
-    discountType: "percentage",
-    discountValue: 10,
-    public_name: "abcd",
-  });
+  const columnData = Array.isArray(data?.data) ? data.data : [];
+
   return (
     <>
       <>
@@ -79,7 +146,7 @@ const DiscountCodePage = () => {
             </Button>
           }
         />
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={columnData} />
         <CreateDiscountCodeModal
           isOpen={isOpen}
           onOpenChange={() => setIsOpen(!isOpen)}
